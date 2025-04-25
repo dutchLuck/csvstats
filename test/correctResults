@@ -1,0 +1,170 @@
+
+++++++++++ csvstats small.csv  +++Small valid 2 column file, no options check++++++++++
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195, 2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195
+2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+10, 10
++90, +100
++9, +10
++9, +10
++18, +19
++0, +1
++18, +18
++6.055300708195, +6.055300708195
++0, +0
+++++++++++ Shell got Return code number 0 for small valid file small.csv, no options check++++++++++
+
+++++++++++ csvstats -H small.csv  +++Small valid 2 column file, with header option check++++++++++
+"Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev.", "Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev."
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195, 2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+"Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev."
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195
+2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+"Stat. Type", "Column 1", "Column 2"
+"Count", 10, 10
+"Sum", +90, +100
+"Median", +9, +10
+"Mean", +9, +10
+"Most +ve", +18, +19
+"Most -ve", +0, +1
+"Range", +18, +18
+"Std. Dev.", +6.055300708195, +6.055300708195
+"Pearson's Skew", +0, +0
+++++++++++ Shell got Return code number 0 for small valid file small.csv, with header option check++++++++++
+
+++++++++++ csvstats -H -n small.csv  +++Small valid 2 column file, with header and extra line options check++++++++++
+
+"Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev.", "Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev."
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195, 2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+
+"Column Number", "Count", "Sum", "Median", "Mean", "Most +ve", "Most -ve", "Range", "Std. Dev."
+1, 10, +90, +9, +9, +18, +0, +18, +6.055300708195
+2, 10, +100, +10, +10, +19, +1, +18, +6.055300708195
+
+"Stat. Type", "Column 1", "Column 2"
+"Count", 10, 10
+"Sum", +90, +100
+"Median", +9, +10
+"Mean", +9, +10
+"Most +ve", +18, +19
+"Most -ve", +0, +1
+"Range", +18, +18
+"Std. Dev.", +6.055300708195, +6.055300708195
+"Pearson's Skew", +0, +0
+
+++++++++++ Shell got Return code number 0 for small valid file small.csv, with header and extra line options check++++++++++
+
+++++++++++ csvstats cols7rows4.csv +++Small valid 7 column file and no options check++++++++++
+1, 4, -2.94384341, -0.721921705, -0.7359608525, -0.7, -0.8, +0.1, +0.043925659358007, 2, 4, -2.96165279, -0.730826395, -0.7404131975, -0.7, -0.8, +0.1, +0.042299043049444, 3, 4, -2.99377781, -0.746888905, -0.7484444525, -0.7, -0.8, +0.1, +0.040864323935429, 4, 4, -0.18179788, -0.04589894, -0.04544947, -0.04, -0.05, +0.01, +0.0041153409386344, 5, 4, +0.1744702, +0.0422351, +0.04361755, +0.05, +0.04, +0.01, +0.0043834792881911, 6, 4, +0.10207896, +0.02603948, +0.02551974, +0.03, +0.02, +0.01, +0.0041263591163155, 7, 4, +0.05141127, +0.010705635, +0.0128528175, +0.02, +0.01, +0.01, +0.0047763853401648
+1, 4, -2.94384341, -0.721921705, -0.7359608525, -0.7, -0.8, +0.1, +0.043925659358007
+2, 4, -2.96165279, -0.730826395, -0.7404131975, -0.7, -0.8, +0.1, +0.042299043049444
+3, 4, -2.99377781, -0.746888905, -0.7484444525, -0.7, -0.8, +0.1, +0.040864323935429
+4, 4, -0.18179788, -0.04589894, -0.04544947, -0.04, -0.05, +0.01, +0.0041153409386344
+5, 4, +0.1744702, +0.0422351, +0.04361755, +0.05, +0.04, +0.01, +0.0043834792881911
+6, 4, +0.10207896, +0.02603948, +0.02551974, +0.03, +0.02, +0.01, +0.0041263591163155
+7, 4, +0.05141127, +0.010705635, +0.0128528175, +0.02, +0.01, +0.01, +0.0047763853401648
+4, 4, 4, 4, 4, 4, 4
+-2.94384341, -2.96165279, -2.99377781, -0.18179788, +0.1744702, +0.10207896, +0.05141127
+-0.721921705, -0.730826395, -0.746888905, -0.04589894, +0.0422351, +0.02603948, +0.010705635
+-0.7359608525, -0.7404131975, -0.7484444525, -0.04544947, +0.04361755, +0.02551974, +0.0128528175
+-0.7, -0.7, -0.7, -0.04, +0.05, +0.03, +0.02
+-0.8, -0.8, -0.8, -0.05, +0.04, +0.02, +0.01
++0.1, +0.1, +0.1, +0.01, +0.01, +0.01, +0.01
++0.043925659358007, +0.042299043049444, +0.040864323935429, +0.0041153409386344, +0.0043834792881911, +0.0041263591163155, +0.0047763853401648
+-0.95883461092138, -0.67993045295094, -0.11419845113243, +0.32765450544844, +0.94613199409265, -0.37786822621301, +1.3486239156277
+++++++++++ Shell got Return code number 0 for small valid file tmp.csv, no options check++++++++++
+
+++++++++++ csvstats heights.csv +++Somewhat longer file with 2 columns, 1 column the reverse of the other++++++++++
+1, 2113, +146765, +70, +69.458116422149, +78, +56, +22, +2.6751649006947, 2, 2113, +146765, +70, +69.458116422149, +78, +56, +22, +2.6751649006947
+1, 2113, +146765, +70, +69.458116422149, +78, +56, +22, +2.6751649006947
+2, 2113, +146765, +70, +69.458116422149, +78, +56, +22, +2.6751649006947
+2113, 2113
++146765, +146765
++70, +70
++69.458116422149, +69.458116422149
++78, +78
++56, +56
++22, +22
++2.6751649006947, +2.6751649006947
+-0.60768243973745, -0.60768243973746
+++++++++++ Shell got Return code number 0 for small file with lengthier lines++++++++++
+
+++++++++++ csvstats -HMNnPRp NIST_StRD_PiDigits.dat +++Long file of 1 column of single digits, no options check++++++++++
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 5000, +22674, +4.5348, +2.8673390602887
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 5000, +22674, +4.5348, +2.8673390602887
+
+"Stat. Type", "Column 1"
+"Count", 5000
+"Sum", +22674
+"Mean", +4.5348
+"Std. Dev.", +2.8673390602887
+
+++++++++++ Shell got Return code number 0 for long file with single column (4.5348, 2.86733906028871)++++++++++
+
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accurracy file of 3 large close numbers++++++++++
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 3, +30000006, +10000002, +1
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 3, +30000006, +10000002, +1
+
+"Stat. Type", "Column 1"
+"Count", 3
+"Sum", +30000006
+"Mean", +10000002
+"Std. Dev.", +1
+
+++++++++++ Shell got Return code number 0 for 1st NIST numerical accuracy file ( 10000002, 1)++++++++++
+
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accurracy file of close numbers++++++++++
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +1201.2, +1.2, +0.099999999999999
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +1201.2, +1.2, +0.099999999999999
+
+"Stat. Type", "Column 1"
+"Count", 1001
+"Sum", +1201.2
+"Mean", +1.2
+"Std. Dev.", +0.099999999999999
+
+++++++++++ Shell got Return code number 0 for 2nd NIST numerical accuracy file ( 1.2, 0.1)++++++++++
+
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accurracy file of close numbers++++++++++
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +1001000200.2, +1000000.2, +0.10000000003492
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +1001000200.2, +1000000.2, +0.10000000003492
+
+"Stat. Type", "Column 1"
+"Count", 1001
+"Sum", +1001000200.2
+"Mean", +1000000.2
+"Std. Dev.", +0.10000000003492
+
+++++++++++ Shell got Return code number 0 for 3rd NIST numerical accuracy file (1000000.2, 0.1)++++++++++
+
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accurracy file of large close numbers++++++++++
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +10010000200.2, +10000000.2, +0.10000000055879
+
+"Column Number", "Count", "Sum", "Mean", "Std. Dev."
+1, 1001, +10010000200.2, +10000000.2, +0.10000000055879
+
+"Stat. Type", "Column 1"
+"Count", 1001
+"Sum", +10010000200.2
+"Mean", +10000000.2
+"Std. Dev.", +0.10000000055879
+
+++++++++++ Shell got Return code number 0 for 4th NIST numerical accuracy file (10000000.2, 0.1)++++++++++
