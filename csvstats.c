@@ -2,10 +2,11 @@
  *
  *  C S V S T A T S . C
  *
- * csvstats.c last edited on Tue Apr 22 20:41:19 2025
+ * csvstats.c last edited on Sun Apr 27 22:04:57 2025
  * 
- * descended from statsCSV.c 0v3
- *
+ * 0v1 Added Std. Dev. of Sample output (i.e. denom. = n)
+ * 0v0 descended from statsCSV.c 0v3
+ * 
  * Written by O.F.Holland.
  *
  */
@@ -16,8 +17,8 @@
 #include <unistd.h>		/* getopt() */
 #include <math.h>     /* sqrtl() */
 
-#define  HEADER  "csvstats.c 0v0"
-#define  ID_STRING  " csvstats 0v0 "
+#define  HEADER  "csvstats.c 0v1"
+#define  ID_STRING  " csvstats 0v1 "
 #ifndef  FALSE
 #define  FALSE 0
 #endif
@@ -47,7 +48,8 @@ long double  columnsMedians[ MAX_NUM_OF_COLS ];
 long double  columnsMostPos[ MAX_NUM_OF_COLS ];
 long double  columnsMostNeg[ MAX_NUM_OF_COLS ];
 long double  columnsSumOfSquares[ MAX_NUM_OF_COLS ];
-long double  columnsStdDev[ MAX_NUM_OF_COLS ];
+long double  columnsSampleStdDev[ MAX_NUM_OF_COLS ];  /* denom. = n */
+long double  columnsEstPopStdDev[ MAX_NUM_OF_COLS ];  /* denom. = n-1 */
 long double  columnsPearsonSkew[ MAX_NUM_OF_COLS ];
 long double *  storage;   /* global storage for input numbers from all columns */
 
@@ -203,7 +205,8 @@ int  compareDoubles( const void *  ptr1, const void *  ptr2 )  {
 
 /*----------------------------------*/
 
-int  calcStdDev( int  numOfCols, long  numOfColValues[], long double  store[], long double *  colStdDev, long double *  colMeans )  {
+int  calcStdDev( int  numOfCols, long  numOfColValues[], long double  store[], long double *  colEstStdDev,
+  long double *  colSmplStdDev, long double *  colMeans )  {
   int  i;
   long j;
   long double *  colStorage;
@@ -236,12 +239,15 @@ int  calcStdDev( int  numOfCols, long  numOfColValues[], long double  store[], l
       for( j = 0, ptr = colStorage; j < numOfColValues[ i ]; j++ )  colMeans[ i ] += *ptr++; /* Sum the column */
       colMeans[ i ] = colMeans[ i ] / ( long double ) numOfColValues[ i ];   /* recalc mean */
       /* find the Std. Dev. of partially normalized numbers */
-      colStdDev[ i ] = ( long double ) 0.0;
+      colEstStdDev[ i ] = ( long double ) 0.0;
       for( j = 0, ptr = colStorage; j < numOfColValues[ i ]; j++, ptr++ )
-        colStdDev[ i ] += ( colMeans[ i ] - *ptr ) * ( colMeans[ i ] - *ptr ); /* Sum squares the column */
-      if( colStdDev[ i ] > (long double ) 0.0 )
-        colStdDev[ i ] = sqrtl( colStdDev[ i ] / ( long double ) ( numOfColValues[ i ] - 1 ));
-      else  colStdDev[ i ] = ( long double ) 0.0;
+        colEstStdDev[ i ] += ( colMeans[ i ] - *ptr ) * ( colMeans[ i ] - *ptr ); /* Sum squares the column */
+      colSmplStdDev[ i ] = colEstStdDev[ i ];   /* copy sum of squares value */
+      if( colEstStdDev[ i ] > (long double ) 0.0 )  {
+        colEstStdDev[ i ] = sqrtl( colEstStdDev[ i ] / ( long double ) ( numOfColValues[ i ] - 1 ));  /* Estimated Std. Dev. of Population */
+        colSmplStdDev[ i ] = sqrtl( colSmplStdDev[ i ] / ( long double ) numOfColValues[ i ]);    /* Std. Dev. of read in samples */
+      }
+      else  colSmplStdDev[ i ] = colEstStdDev[ i ] = ( long double ) 0.0;   /* zero if we can't do square root */
     }
     free( colStorage );
   }
@@ -311,7 +317,7 @@ void  printLongAndSeparator( long  number, char *  separator )  {
 /*----------------------------------*/
 
 void  printNumberAndSeparator( long double  number, char *  separator )  {
-  printf( "%+.14Lg", number );
+  printf( "%+.15Lg", number );
   if (( separator != NULL ) || ( *separator != '\0' ))  printf( "%s", separator );
 }
 
@@ -342,7 +348,7 @@ void  printColumnsStatsInRows( int  numOfColumns, long  numOfValues[], char *  s
       printNumberAndSeparator( columnsMostPos[ i ] - columnsMostNeg[i], (
         stdDevOutputFlag ) ? separatorStr : "" );
     if( stdDevOutputFlag )  {
-      printNumberAndSeparator( columnsStdDev[ i ], "" );
+      printNumberAndSeparator( columnsEstPopStdDev[ i ], "" );
     }
     /* if oneRowFlag is active then continue using separator until the last column stats are printed */
     if ( oneRowFlag && (( i + 1 ) < numOfColumns ))  printf( "%s", separatorStr );
@@ -372,7 +378,7 @@ void  printColumnsStatsLabelsInRows( int  numOfColumns, char *  separatorStr )  
   if( rangeOutputFlag )
     printf( "\"Range\"%s", ( stdDevOutputFlag ) ? separatorStr : "" );
   if( stdDevOutputFlag )  {
-    printf( "\"Std. Dev.\"" );
+    printf( "\"Est. Pop. Std. Dev.\"" );
   }
 }
 
@@ -415,9 +421,13 @@ void  printColumnsStatsInColumns( int  numOfColumns, long  numOfValues[], char *
       printNumberAndSeparator( columnsMostPos[i] - columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
   }
   if( stdDevOutputFlag )  {
-    if ( verbose || headerFlag )  printf( "\"Std. Dev.\", " );
+    if ( verbose || headerFlag )  printf( "\"Sample Std. Dev.\", " );
     for( i = 0; i < numOfColumns; i++ )  {
-      printNumberAndSeparator( columnsStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+      printNumberAndSeparator( columnsSampleStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+    }
+    if ( verbose || headerFlag )  printf( "\"Est. Pop. Std. Dev.\", " );
+    for( i = 0; i < numOfColumns; i++ )  {
+      printNumberAndSeparator( columnsEstPopStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
     }
   }
   if( pearsonsSkewOutputFlag )  {
@@ -426,6 +436,31 @@ void  printColumnsStatsInColumns( int  numOfColumns, long  numOfValues[], char *
       printNumberAndSeparator( columnsPearsonSkew[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
     }
   }
+}
+
+
+/*----------------------------------*/
+
+void  outputStatsInRowForm( int  numOfColumns )  {
+  int  i;
+
+  /* print all column stats in just one line (i.e. just one row ) */
+  if ( verboseFlag || headerFlag )  {
+    for( i = 0; i < numOfColumns; i++ )  {
+      printColumnsStatsLabelsInRows( numOfColumns, ", " );
+      if (( i + 1 ) < numOfColumns )  printf( ", " );   /* add separator up to the penultimate column */
+    }
+    printf( "\n" );
+  }
+  printColumnsStatsInRows( numOfColumns, columnsSizes, ", ", TRUE );
+  if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
+  /* print column stats in row form (i.e. one line or row per column ) */
+  if ( verboseFlag || headerFlag )  {
+    printColumnsStatsLabelsInRows( numOfColumns, ", " );
+    printf( "\n" );
+  }
+  printColumnsStatsInRows( numOfColumns, columnsSizes, ", ", FALSE );
+  if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
 }
 
 
@@ -505,32 +540,16 @@ int  main( int argc, char * argv[])  {
       /* Calculate means for use in the Std Dev calcs */
       for( i = 0; i < numOfColumns; i++ )
         columnsMeans[ i ] = columnsSums[ i ] / ( long double ) columnsSizes[ i ];
-      if ( calcStdDev( numOfColumns, columnsSizes, storage, columnsStdDev, columnsMeans ) != numOfColumns )
+      if ( calcStdDev( numOfColumns, columnsSizes, storage, columnsEstPopStdDev, columnsSampleStdDev, columnsMeans ) != numOfColumns )
         printf( "Warning: unable to calulate Std. Dev. values\n" );
       /* Re-calculate means after use in the Std Dev calcs & then calc Pearson's measure of skewness */
       for( i = 0; i < numOfColumns; i++ )  {
         columnsMeans[ i ] = columnsSums[ i ] / ( long double ) columnsSizes[ i ];
-        columnsPearsonSkew[ i ] = ( long double ) 3 * ( columnsMeans[ i ] - columnsMedians[ i ]) / columnsStdDev[ i ];
+        columnsPearsonSkew[ i ] = ( long double ) 3 * ( columnsMeans[ i ] - columnsMedians[ i ]) / columnsEstPopStdDev[ i ];
       }
       /* Print out the stats in various forms of csv format */
       if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
-      /* print all column stats in just one line (i.e. just one row ) */
-      if ( verboseFlag || headerFlag )  {
-        for( i = 0; i < numOfColumns; i++ )  {
-          printColumnsStatsLabelsInRows( numOfColumns, ", " );
-          if (( i + 1 ) < numOfColumns )  printf( ", " );   /* add separator up to the penultimate column */
-        }
-        printf( "\n" );
-      }
-      printColumnsStatsInRows( numOfColumns, columnsSizes, ", ", TRUE );
-      if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
-      /* print column stats in row form (i.e. one line or row per column ) */
-      if ( verboseFlag || headerFlag )  {
-        printColumnsStatsLabelsInRows( numOfColumns, ", " );
-        printf( "\n" );
-      }
-      printColumnsStatsInRows( numOfColumns, columnsSizes, ", ", FALSE );
-      if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
+      if ( verboseFlag )  outputStatsInRowForm( numOfColumns );   /* only output stats in row form in vebose mode */
       /* print column stats in column form */
       if ( verboseFlag || headerFlag )  {
         printf( "\"Stat. Type\", " );

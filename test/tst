@@ -42,6 +42,26 @@ echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_PiDigits.dat +++Long file of 1 column
 echo "${TEN_PLUSS} Shell got Return code number $? for long file with single column (4.5348, 2.86733906028871)${TEN_PLUSS}"
 #
 echo ""
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_Lew.dat +++Long file of 1 column of single digits, no options check${TEN_PLUSS}"
+../$EXE -HMNnPRp NIST_StRD_Lew.dat
+echo "${TEN_PLUSS} Shell got Return code number $? for 200 long file with single column (-177.435, 277.332168044316)${TEN_PLUSS}"
+#
+echo ""
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_Lottery.dat +++Long file of 1 column of single digits, no options check${TEN_PLUSS}"
+../$EXE -HMNnPRp NIST_StRD_Lottery.dat
+echo "${TEN_PLUSS} Shell got Return code number $? for 218 long file with single column (518.958715596330, 291.699727470969)${TEN_PLUSS}"
+#
+echo ""
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_Mavro.dat +++Long file of 1 column of single digits, no options check${TEN_PLUSS}"
+../$EXE -HMNnPRp NIST_StRD_Mavro.dat
+echo "${TEN_PLUSS} Shell got Return code number $? for 50 long file with single column (2.001856, 0.000429123454003053)${TEN_PLUSS}"
+#
+echo ""
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column of single digits, no options check${TEN_PLUSS}"
+../$EXE -HMNnPRp NIST_StRD_Michelso.dat
+echo "${TEN_PLUSS} Shell got Return code number $? for 100 long file with single column (299.8524, 0.0790105478190518)${TEN_PLUSS}"
+#
+echo ""
 echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accurracy file of 3 large close numbers${TEN_PLUSS}"
 ../$EXE -HMNnPRp NIST_StRD_NumAcc1.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for 1st NIST numerical accuracy file ( 10000002, 1)${TEN_PLUSS}"
