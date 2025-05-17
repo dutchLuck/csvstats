@@ -8,7 +8,7 @@ NAME1=csvstats
 #
 OP_FILE_NAME=Makefile
 COMPILER=cc
-OPTIONS="-Wall -pedantic"
+OPTIONS="-Wall -pedantic -Wextra"
 LNK_OPTIONS="-lm"
 TRGT=$NAME1
 SRC1=$NAME1.c
@@ -44,11 +44,29 @@ echo -e "\trm -f $TRGT $TRGT.exe *.o" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "debug: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -c $SRC1" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -c $SRC1" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "debug_double: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -c $SRC1" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "debug_float: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -c $SRC1" >> $OP_FILE_NAME
 echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "valgrind: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind_double: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind_float: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #

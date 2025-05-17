@@ -2,8 +2,9 @@
  *
  *  C S V S T A T S . C
  *
- * csvstats.c last edited on Sun Apr 27 22:04:57 2025
+ * csvstats.c last edited on Sat May 17 21:03:57 2025
  * 
+ * 0v2 Changed to use double precision by default & added more debug code
  * 0v1 Added Std. Dev. of Sample output (i.e. denom. = n)
  * 0v0 descended from statsCSV.c 0v3
  * 
@@ -15,10 +16,10 @@
 #include <stdlib.h>		/* exit() qsort() */
 #include <string.h>		/* strlen() */
 #include <unistd.h>		/* getopt() */
-#include <math.h>     /* sqrtl() */
+#include <math.h>		/* sqrtl(), sqrt(), sqrtf() */
 
-#define  HEADER  "csvstats.c 0v1"
-#define  ID_STRING  " csvstats 0v1 "
+#define  HEADER  "csvstats.c 0v2"
+#define  ID_STRING  " csvstats 0v2 "
 #ifndef  FALSE
 #define  FALSE 0
 #endif
@@ -28,6 +29,44 @@
 #define  MAX_NUM_OF_COLS  100
 #define  BFR_SIZE  15*MAX_NUM_OF_COLS
 #define  COMP_NUMBER  2520
+/* Set up default Floating Point Precision to double */
+#ifndef  LDBL_PREC
+#ifndef  FLT_PREC
+#define  DBL_PREC 1
+#endif
+#endif
+
+/* Handle different precision of floating point numbers - This is clunky probably needs rewriting in C++ */
+#ifdef  LDBL_PREC
+#define  REAL_NUM_PREC  long double
+#define  REAL_NUM_TYPE_STR  "long double"
+#define  SIZEOF_REAL_NUM  __SIZEOF_LONG_DOUBLE__
+#define  RD_IN_FMT  "%Lg"
+#define  WRT_OUT_FMT  "%+.*Lg"
+#define  WRT_OUT_DIG  __LDBL_DECIMAL_DIG__
+#define  FABS  fabsl
+#define  SQRT  sqrtl
+#endif
+#ifdef  DBL_PREC
+#define  REAL_NUM_PREC  double
+#define  REAL_NUM_TYPE_STR  "double"
+#define  SIZEOF_REAL_NUM  __SIZEOF_DOUBLE__
+#define  RD_IN_FMT  "%lg"
+#define  WRT_OUT_FMT  "%+.*lg"
+#define  WRT_OUT_DIG  __DBL_DECIMAL_DIG__
+#define  FABS  fabs
+#define  SQRT  sqrt
+#endif
+#ifdef  FLT_PREC
+#define  REAL_NUM_PREC  float
+#define  REAL_NUM_TYPE_STR  "float"
+#define  SIZEOF_REAL_NUM  __SIZEOF_FLOAT__
+#define  RD_IN_FMT  "%g"
+#define  WRT_OUT_FMT  "%+.*e"
+#define  WRT_OUT_DIG  __FLT_DECIMAL_DIG__
+#define  FABS  fabsf
+#define  SQRT  sqrtf
+#endif
 
 int  debugFlag;
 int  verboseFlag;
@@ -41,17 +80,16 @@ int  mostNegOutputFlag;
 int  rangeOutputFlag;
 int  stdDevOutputFlag;
 int  pearsonsSkewOutputFlag;
-long  columnsSizes[ MAX_NUM_OF_COLS ];
-long double  columnsSums[ MAX_NUM_OF_COLS ];
-long double  columnsMeans[ MAX_NUM_OF_COLS ];
-long double  columnsMedians[ MAX_NUM_OF_COLS ];
-long double  columnsMostPos[ MAX_NUM_OF_COLS ];
-long double  columnsMostNeg[ MAX_NUM_OF_COLS ];
-long double  columnsSumOfSquares[ MAX_NUM_OF_COLS ];
-long double  columnsSampleStdDev[ MAX_NUM_OF_COLS ];  /* denom. = n */
-long double  columnsEstPopStdDev[ MAX_NUM_OF_COLS ];  /* denom. = n-1 */
-long double  columnsPearsonSkew[ MAX_NUM_OF_COLS ];
-long double *  storage;   /* global storage for input numbers from all columns */
+size_t  columnsSizes[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsSums[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsMeans[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsMedians[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsMostPos[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsMostNeg[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsSampleStdDev[ MAX_NUM_OF_COLS ];  /* Sample Std. Dev. (denom. = n) */
+REAL_NUM_PREC  columnsEstPopStdDev[ MAX_NUM_OF_COLS ];  /* Population Std. Dev. estimate (denom. = n-1) */
+REAL_NUM_PREC  columnsPearsonSkew[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC *  storage;   /* global storage for input numbers from all columns */
 
 /*-------------------------------------------------------------*/
 
@@ -126,24 +164,21 @@ int  modifyProgramGlobalDataAccordingToCommandLineSwitches( int  argc, char *  a
 
 int  processFirstLineOfNumbers( char *  linePtr )  {
   int  cnt, result;
-  long double *  sumsPtr;
-  long double *  mostPosPtr;
-  long double *  mostNegPtr;
-  long double *  sumsOfSquaresPtr;
-  long double *  storagePtr;
+  REAL_NUM_PREC *  sumsPtr;
+  REAL_NUM_PREC *  mostPosPtr;
+  REAL_NUM_PREC *  mostNegPtr;
+  REAL_NUM_PREC *  storagePtr;
 
   sumsPtr = columnsSums;
   mostPosPtr = columnsMostPos;
   mostNegPtr = columnsMostNeg;
-  sumsOfSquaresPtr = columnsSumOfSquares;
   storagePtr = storage;
   cnt = 0;
   do  {
-    result = sscanf( linePtr, "%Lg", sumsPtr );   /* read numbers as long double (i.e. high precision floating point )*/
+    result = sscanf( linePtr, RD_IN_FMT, sumsPtr );   /* read numbers in desired precision floating point */
     if( result == 1 )
       columnsSizes[ cnt++ ] = 1;  /* Only increment if successful */
-    *storagePtr++ = *sumsPtr;       /* put new value in storage */
-    *sumsOfSquaresPtr++ = *sumsPtr * *sumsPtr;
+    *storagePtr++ = *sumsPtr;     /* put new value in storage */
     *mostPosPtr++  = *sumsPtr;
     *mostNegPtr++  = *sumsPtr++;
     linePtr = strchr( linePtr, ',' );
@@ -157,25 +192,22 @@ int  processFirstLineOfNumbers( char *  linePtr )  {
 
 int  processLine( char *  linePtr, int  numberOfColumns )  {
   int  cnt;
-  long double  dTmp;
-  long double *  sumsPtr;
-  long double *  mostPosPtr;
-  long double *  mostNegPtr;
-  long double *  sumsOfSquaresPtr;
-  long double *  storagePtr;
+  REAL_NUM_PREC  dTmp;
+  REAL_NUM_PREC *  sumsPtr;
+  REAL_NUM_PREC *  mostPosPtr;
+  REAL_NUM_PREC *  mostNegPtr;
+  REAL_NUM_PREC *  storagePtr;
 
   sumsPtr = columnsSums;
   mostPosPtr = columnsMostPos;
   mostNegPtr = columnsMostNeg;
-  sumsOfSquaresPtr = columnsSumOfSquares;
   storagePtr = storage + numberOfColumns;     /* start after the first line */
   cnt = 0;
   do  {
-    if( sscanf( linePtr, "%Lg", &dTmp ) == 1 )  {   /* read numbers as long double (i.e. high precision floating point )*/
+    if( sscanf( linePtr, RD_IN_FMT, &dTmp ) == 1 )  {   /* read numbers in desired precision floating point */
       columnsSizes[ cnt ] += 1;
       *storagePtr++ = dTmp;   /* save number to storage */
       *sumsPtr++ += dTmp;
-      *sumsOfSquaresPtr++ += dTmp * dTmp;
       if( dTmp > *mostPosPtr )  *mostPosPtr++ = dTmp;
       else  mostPosPtr++;
       if( dTmp < *mostNegPtr )  *mostNegPtr++ = dTmp;
@@ -191,63 +223,142 @@ int  processLine( char *  linePtr, int  numberOfColumns )  {
 
 /*----------------------------------*/
 
-int  compareDoubles( const void *  ptr1, const void *  ptr2 )  {
-  long double *  dp1;
-  long double *  dp2;
-
-  dp1 = ( long double * ) ptr1;
-  dp2 = ( long double * ) ptr2;
-  if ( *dp1 > *dp2 )  return( 1 );
-  else if ( *dp2 > *dp1 )  return( -1 );
-  return 0;
+void  printNumberAndSeparator( REAL_NUM_PREC  number, char *  separator )  {
+  printf( WRT_OUT_FMT, WRT_OUT_DIG, number );   /* use precision specified by macro in float.h */
+  if (( separator != NULL ) || ( *separator != '\0' ))  printf( "%s", separator );
 }
 
 
 /*----------------------------------*/
 
-int  calcStdDev( int  numOfCols, long  numOfColValues[], long double  store[], long double *  colEstStdDev,
-  long double *  colSmplStdDev, long double *  colMeans )  {
-  int  i;
-  long j;
-  long double *  colStorage;
-  long double *  storagePtr;
-  long double *  ptr;
+void  printDebugStats( int colnum, REAL_NUM_PREC  ave, REAL_NUM_PREC  adev, REAL_NUM_PREC  sdev, REAL_NUM_PREC  var,
+  REAL_NUM_PREC  skew, REAL_NUM_PREC  curt )  {
 
+  printf( "Debug: Col %d, ", colnum );
+  printf( "Av. " );
+  printNumberAndSeparator( ave, ", " );
+  printf( "ADev. " );
+  printNumberAndSeparator( adev, ", " );
+  printf( "SDev. " );
+  printNumberAndSeparator( sdev, ", " );
+  printf( "Var. " );
+  printNumberAndSeparator( var, ", " );
+  printf( "Skew " );
+  printNumberAndSeparator( skew, ", " );
+  printf( "Kurt. " );
+  printNumberAndSeparator( curt, ", " );
+  printf( "\n" );
+}
+
+#ifdef  DEBUG
+/*----------------------------------*/
+
+void  doStats( REAL_NUM_PREC  data[], size_t  dataPoints, REAL_NUM_PREC *  average, REAL_NUM_PREC *  adev,
+  REAL_NUM_PREC *  sdev, REAL_NUM_PREC *  var, REAL_NUM_PREC *  skew, REAL_NUM_PREC *  kurt )  {
+  size_t  index;
+  REAL_NUM_PREC  sum, dist, d2sum, d3sum, d4sum, a_mean, ld_n;
+
+  *adev = *sdev = *var = *skew = *kurt = d2sum = d3sum = d4sum = sum = ( REAL_NUM_PREC) 0.0;
+  if ( dataPoints == ( size_t ) 0 )  { *average = ( REAL_NUM_PREC) 0.0; }
+  else if ( dataPoints == ( size_t ) 1 )  { *average = data[0]; }
+  else  {
+    ld_n = ( REAL_NUM_PREC ) dataPoints;
+    for ( index = 0; index < dataPoints; index++ )  sum += data[ index ];    /* total up the data */
+    *average = a_mean = sum / ld_n;    /* calculate the arithmetic mean as the average */
+    for ( index = 0; index < dataPoints; index++ )  {
+      dist = data[ index ] - a_mean;
+      *adev += FABS( dist );
+      d2sum += ( dist * dist );   /* 2nd power of distance from average */
+      d3sum += ( dist * dist * dist );  /* 3rd power of distance from average */
+      d4sum += ( dist * dist * dist * dist );   /* 4th power of distance from average */
+    }
+    *adev /= ld_n;
+    *var = d2sum / ( REAL_NUM_PREC )( dataPoints - 1 );
+    if (( *var == ( REAL_NUM_PREC ) +0.0 ) || ( *var == ( REAL_NUM_PREC ) -0.0 ))  {
+      printf( "Warning: Variance is zero: unable to calculate Std. Dev.\n");
+    }
+    else  {
+      *sdev = SQRT( *var );
+      *skew = d3sum / ( ld_n * ( *var ) * ( *sdev ));
+      *kurt = ( d4sum / ( ld_n * ( *var ) * ( *var ))) - ( REAL_NUM_PREC ) 3.0;
+    }
+  }
+}
+#endif
+
+
+/*----------------------------------*/
+
+int  calcStdDev( int  numOfCols, size_t  numOfColValues[], REAL_NUM_PREC  store[], REAL_NUM_PREC *  colEstStdDev,
+  REAL_NUM_PREC *  colSmplStdDev, REAL_NUM_PREC *  colMeans )  {
+  int  i;
+  size_t j;
+  REAL_NUM_PREC *  colStorage;
+  REAL_NUM_PREC *  storagePtr;
+  REAL_NUM_PREC *  ptr;
+#ifdef DEBUG
+  REAL_NUM_PREC  ave, adev, sdev, var, skew, curt;
+#endif
+
+  printf( "Std. Dev. with %s precision (%d byte numbers)\n", REAL_NUM_TYPE_STR, SIZEOF_REAL_NUM );
   /* find longest column, just in case they are not all the same lengths */
   for( i = 0, j = 0; i < numOfCols; i++ )  if ( numOfColValues[ i ] > j )  j = numOfColValues[ i ];   /* find biggest */
   /* ensure we allocate enough temporary storage for the longest column */
-  if (( colStorage = calloc( j, sizeof( long double ))) == NULL )
-    return( 0 );  /* No medians calculated */
+  if (( colStorage = calloc( j, SIZEOF_REAL_NUM )) == NULL )
+    return( 0 );  /* Std. Dev. not calculated if no memory is available */
   else  {
     for( i = 0; i < numOfCols; i++ )  {   /* step through each columns data */
+#ifdef  DEBUG
+      ptr = colStorage;         /* point at start of temp column storage */
+      storagePtr = store + i;   /* point at first value for the column in the external store */
+      /* demultiplex stored value into the column, but don't subtract the mean from each reading */
+      /* this is straight forward, but comes at a risk of possible numerical inaccuracies */
+      for( j = 0; j < numOfColValues[ i ]; j++ )  {
+        *ptr++ = *storagePtr;   /* just copy, don't partially normalize numbers */
+        storagePtr += numOfCols;  /* step to next number for the current column */
+      }
+      if ( debugFlag )  {
+        ave = adev = sdev = var = skew = curt = ( REAL_NUM_PREC ) 0.0;
+        doStats( colStorage, numOfColValues[ i ], &ave, &adev, &sdev, &var, &skew, &curt );
+        printDebugStats( i, ave, adev, sdev, var, skew, curt );
+      }
+#endif
       ptr = colStorage;         /* point at start of temp column storage */
       storagePtr = store + i;   /* point at first value for the column in the external store */
       /* demultiplex stored value into the column, but also subtract the mean from each reading */
       /* this doesn't change the Std. Dev. but does reduce the risk of numerical inaccuracies */
       for( j = 0; j < numOfColValues[ i ]; j++ )  {
         *ptr++ = *storagePtr - colMeans[ i ];   /* partially normalize numbers */
-        storagePtr += numOfCols;    /* step to next number for the current column */
+        storagePtr += numOfCols;  /* step to next number for the current column */
       }
 #ifdef  DEBUG
       if ( debugFlag )  {
-        printf( "\ncolumn %d centred values\n", i );
-        for( j = 0; j < numOfColValues[ i ]; j++ )  printf( "%ld: %Lg\n", j, colStorage[ j ]);
+        ave = adev = sdev = var = skew = curt = ( REAL_NUM_PREC ) 0.0;
+        doStats( colStorage, numOfColValues[ i ], &ave, &adev, &sdev, &var, &skew, &curt );
+        printDebugStats( i, ave, adev, sdev, var, skew, curt );
+      }
+      if ( debugFlag )  {
+        printf( "\nDebug: column %d centred values\n", i );
+        for( j = 0; j < numOfColValues[ i ]; j++ )  {
+          printf( "%ld: ", j );
+          printNumberAndSeparator( colStorage[ j ], "\n");
+        }
       }
 #endif
       /* find the mean value of the column of partially normalized numbers */
-      colMeans[ i ] = ( long double ) 0.0;
+      colMeans[ i ] = ( REAL_NUM_PREC ) 0.0;
       for( j = 0, ptr = colStorage; j < numOfColValues[ i ]; j++ )  colMeans[ i ] += *ptr++; /* Sum the column */
-      colMeans[ i ] = colMeans[ i ] / ( long double ) numOfColValues[ i ];   /* recalc mean */
+      colMeans[ i ] /= ( REAL_NUM_PREC ) numOfColValues[ i ];   /* recalc mean */
       /* find the Std. Dev. of partially normalized numbers */
-      colEstStdDev[ i ] = ( long double ) 0.0;
+      colEstStdDev[ i ] = ( REAL_NUM_PREC ) 0.0;
       for( j = 0, ptr = colStorage; j < numOfColValues[ i ]; j++, ptr++ )
         colEstStdDev[ i ] += ( colMeans[ i ] - *ptr ) * ( colMeans[ i ] - *ptr ); /* Sum squares the column */
       colSmplStdDev[ i ] = colEstStdDev[ i ];   /* copy sum of squares value */
-      if( colEstStdDev[ i ] > (long double ) 0.0 )  {
-        colEstStdDev[ i ] = sqrtl( colEstStdDev[ i ] / ( long double ) ( numOfColValues[ i ] - 1 ));  /* Estimated Std. Dev. of Population */
-        colSmplStdDev[ i ] = sqrtl( colSmplStdDev[ i ] / ( long double ) numOfColValues[ i ]);    /* Std. Dev. of read in samples */
+      if( colEstStdDev[ i ] > (REAL_NUM_PREC ) 0.0 )  {
+        colEstStdDev[ i ] = SQRT( colEstStdDev[ i ] / ( REAL_NUM_PREC ) ( numOfColValues[ i ] - 1 ));  /* Estimated Std. Dev. of Population */
+        colSmplStdDev[ i ] = SQRT( colSmplStdDev[ i ] / ( REAL_NUM_PREC ) numOfColValues[ i ]);    /* Std. Dev. of read in samples */
       }
-      else  colSmplStdDev[ i ] = colEstStdDev[ i ] = ( long double ) 0.0;   /* zero if we can't do square root */
+      else  colSmplStdDev[ i ] = colEstStdDev[ i ] = ( REAL_NUM_PREC ) 0.0;   /* zero if we can't do square root */
     }
     free( colStorage );
   }
@@ -257,17 +368,31 @@ int  calcStdDev( int  numOfCols, long  numOfColValues[], long double  store[], l
 
 /*----------------------------------*/
 
-int  calcMedians( int  numOfCols, long  numOfColValues[], long double  store[], long double *  colMedians )  {
+int  compareRealNumbers( const void *  ptr1, const void *  ptr2 )  {
+  REAL_NUM_PREC *  dp1;
+  REAL_NUM_PREC *  dp2;
+
+  dp1 = ( REAL_NUM_PREC * ) ptr1;
+  dp2 = ( REAL_NUM_PREC * ) ptr2;
+  if ( *dp1 > *dp2 )  return( 1 );
+  else if ( *dp2 > *dp1 )  return( -1 );
+  return 0;
+}
+
+
+/*----------------------------------*/
+
+int  calcMedians( int  numOfCols, size_t  numOfColValues[], REAL_NUM_PREC  store[], REAL_NUM_PREC *  colMedians )  {
   int  i;
-  long  j;
-  long double *  colStorage;
-  long double *  storagePtr;
-  long double *  ptr;
+  size_t  j;
+  REAL_NUM_PREC *  colStorage;
+  REAL_NUM_PREC *  storagePtr;
+  REAL_NUM_PREC *  ptr;
 
   /* find longest column, just in case they are not all the same lengths */
   for( i = 0, j = 0; i < numOfCols; i++ )  if ( numOfColValues[ i ] > j )  j = numOfColValues[ i ];   /* find biggest */
   /* ensure we allocate enough temporary storage for the longest column */
-  if (( colStorage = calloc( j, sizeof( long double ))) == NULL )
+  if (( colStorage = calloc( j, SIZEOF_REAL_NUM )) == NULL )
     return( 0 );  /* No medians calculated */
   else  {
     for( i = 0; i < numOfCols; i++ )  {   /* step through each columns data */
@@ -280,20 +405,26 @@ int  calcMedians( int  numOfCols, long  numOfColValues[], long double  store[], 
       }
 #ifdef  DEBUG
       if ( debugFlag )  {
-        printf( "\nUnsorted column %d ( %ld values)\n", i, numOfColValues[ i ] );
-        for( j = 0; j < numOfColValues[ i ]; j++ )  printf( "%ld: %Lg\n", j, colStorage[ j ]);
+        printf( "\nUnsorted column %d ( %lu values)\n", i, numOfColValues[ i ]);
+        for( j = 0; j < numOfColValues[ i ]; j++ )  {
+          printf( "%lu: ", j );
+          printNumberAndSeparator( colStorage[ j ], "\n");
+        }
       }
 #endif
       /* sort the column */
-      qsort( colStorage, numOfColValues[ i ], sizeof( long double ), compareDoubles );
+      qsort( colStorage, numOfColValues[ i ], SIZEOF_REAL_NUM, compareRealNumbers );
 #ifdef  DEBUG
       if ( debugFlag )  {
-        printf( "Sorted column %d\n", i );
-        for( j = 0; j < numOfColValues[ i ]; j++ )  printf( "%ld: %Lg\n", j, colStorage[ j ]);
+        printf( "Sorted column %d ( %lu values)\n", i, numOfColValues[ i ]);
+        for( j = 0; j < numOfColValues[ i ]; j++ )  {
+          printf( "%lu: ", j );
+          printNumberAndSeparator( colStorage[ j ], "\n");
+        }
       }
 #endif
-      /* find the median value */
-     j = numOfColValues[ i ] / 2;
+    /* find the median value */
+      j = numOfColValues[ i ] / 2;
       if (( numOfColValues[ i ] % 2 ) == 1 )   /* odd number ? */
         colMedians[ i ] =  colStorage[ j ];
       else  {
@@ -316,20 +447,20 @@ void  printLongAndSeparator( long  number, char *  separator )  {
 
 /*----------------------------------*/
 
-void  printNumberAndSeparator( long double  number, char *  separator )  {
-  printf( "%+.15Lg", number );
+void  printULongAndSeparator( unsigned long  number, char *  separator )  {
+  printf( "%lu", number );
   if (( separator != NULL ) || ( *separator != '\0' ))  printf( "%s", separator );
 }
 
 
 /*----------------------------------*/
 
-void  printColumnsStatsInRows( int  numOfColumns, long  numOfValues[], char *  separatorStr, int  oneRowFlag )  {
+void  printColumnsStatsInRows( int  numOfColumns, size_t  numOfValues[], char *  separatorStr, int  oneRowFlag )  {
   int  i;
 
   /* all columns Stats except the most righthand one need the separator */
   for( i = 0; i < numOfColumns; i++ )  {
-    printf( "%d, %ld, ", i + 1, numOfValues[ i ] );  /* column number, count, assume at least one column stat to print */
+    printf( "%d, %lu, ", i + 1, numOfValues[ i ] );  /* column number, count, assume at least one column stat to print */
     printNumberAndSeparator( columnsSums[ i ], ( medianOutputFlag || arithmeticMeanOutputFlag || mostPosOutputFlag ||
       mostNegOutputFlag || rangeOutputFlag || stdDevOutputFlag ) ? separatorStr : "" );
     if( medianOutputFlag )
@@ -359,7 +490,7 @@ void  printColumnsStatsInRows( int  numOfColumns, long  numOfValues[], char *  s
 
 /*----------------------------------*/
 
-void  printColumnsStatsLabelsInRows( int  numOfColumns, char *  separatorStr )  {
+void  printColumnsStatsLabelsInRows( char *  separatorStr )  {
   /* all columns Stats except the most righthand one need the separator */
   printf( "\"Column Number\", \"Count\", " );  /* column number, count, assume at least one column stat to print */
   printf( "\"Sum\"%s", ( medianOutputFlag || arithmeticMeanOutputFlag || mostPosOutputFlag ||
@@ -385,13 +516,13 @@ void  printColumnsStatsLabelsInRows( int  numOfColumns, char *  separatorStr )  
 
 /*----------------------------------*/
 
-void  printColumnsStatsInColumns( int  numOfColumns, long  numOfValues[], char *  separatorStr, int verbose )  {
+void  printColumnsStatsInColumns( int  numOfColumns, size_t  numOfValues[], char *  separatorStr, int verbose )  {
   int  i;
 
   /* all columns Stats except the most righthand one need the separator */
   if ( verbose || headerFlag )  printf( "\"Count\", " );
   for( i = 0; i < numOfColumns; i++ )
-    printLongAndSeparator( numOfValues[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+    printULongAndSeparator( numOfValues[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
   if ( verbose || headerFlag )  printf( "\"Sum\", " );
   for( i = 0; i < numOfColumns; i++ )
     printNumberAndSeparator( columnsSums[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
@@ -447,7 +578,7 @@ void  outputStatsInRowForm( int  numOfColumns )  {
   /* print all column stats in just one line (i.e. just one row ) */
   if ( verboseFlag || headerFlag )  {
     for( i = 0; i < numOfColumns; i++ )  {
-      printColumnsStatsLabelsInRows( numOfColumns, ", " );
+      printColumnsStatsLabelsInRows( ", " );
       if (( i + 1 ) < numOfColumns )  printf( ", " );   /* add separator up to the penultimate column */
     }
     printf( "\n" );
@@ -456,7 +587,7 @@ void  outputStatsInRowForm( int  numOfColumns )  {
   if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
   /* print column stats in row form (i.e. one line or row per column ) */
   if ( verboseFlag || headerFlag )  {
-    printColumnsStatsLabelsInRows( numOfColumns, ", " );
+    printColumnsStatsLabelsInRows( ", " );
     printf( "\n" );
   }
   printColumnsStatsInRows( numOfColumns, columnsSizes, ", ", FALSE );
@@ -466,11 +597,26 @@ void  outputStatsInRowForm( int  numOfColumns )  {
 
 /*----------------------------------*/
 
+void  outputStatsInColumnForm( int  numOfColumns )  {
+  int  i;
+
+  /* print column stats in column form */
+  if ( verboseFlag || headerFlag )  {
+    printf( "\"Stat. Type\", " );
+    for( i = 1; i < numOfColumns; i++ )  printf( "\"Column %d\", ", i );
+    printf( "\"Column %d\"\n", numOfColumns );
+  }
+  printColumnsStatsInColumns( numOfColumns, columnsSizes, ", ", verboseFlag );
+}
+
+
+/*----------------------------------*/
+
 int  main( int argc, char * argv[])  {
   int  i, numOfColumns, farg;
   int  exitFlag;
-  long  totalNumbers, lineNumber;
-  size_t  storageSize;
+  long  lineNumber;
+  size_t  totalNumbers, storageSize;
   FILE *  fp;
   char  bfr[ BFR_SIZE ];
 
@@ -494,20 +640,20 @@ int  main( int argc, char * argv[])  {
     if( fp == NULL )
       fprintf( stderr, "Error: Unable to open file named \"%s\".\n", argv[ farg ] );
     else  {
-      if (( storage = malloc( storageSize * sizeof( long double ))) == NULL )  {
+      if (( storage = malloc( storageSize * SIZEOF_REAL_NUM )) == NULL )  {
         fprintf( stderr, "Error: unable to allocate memory to store %ld csv numbers: Aborting\n", storageSize );
       }
       else  {
         while( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )  {
-          if (( *bfr == '\0' ) || ( *bfr == '#' ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {
-            if ( debugFlag )  printf( "Debug: Warning: skipping a line (blank or comment)\n" );
+          if (( *bfr == '\0' ) || ( *bfr == '#' ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {   /* skip comments or blank lines */
+            if ( debugFlag )  printf( "Debug: Warning: skipping a line (blank or comment) - %s", ( *bfr == '#' ) ? bfr : "\n" );
           }
           else  {
             lineNumber += 1;
-            if( lineNumber == 1 )  {
-              if ( debugFlag )  printf( "Debug: %ld: '%s'\n", lineNumber, bfr );
+            if( lineNumber == (long) 1 )  {
+              if ( debugFlag )  printf( "Debug: %ld: %s", lineNumber, bfr );
 	            totalNumbers = numOfColumns = processFirstLineOfNumbers( bfr );
-              if( debugFlag )
+              if( debugFlag || verboseFlag )
                 printf( "Debug: %d Column(s) found in the first line of numbers.\n", numOfColumns );
             }
     	      else  {
@@ -517,12 +663,12 @@ int  main( int argc, char * argv[])  {
                     i, lineNumber, numOfColumns );
               }
               totalNumbers += i;  /* keep track of how many numbers in total are in the storage */
-              if ( debugFlag )  printf( "%ld total numbers so far\n", totalNumbers );
+              if ( debugFlag )  printf( "%lu total numbers so far - %s", totalNumbers, bfr );
               if ( totalNumbers >= ( storageSize - numOfColumns ))  {
                 if ( debugFlag )
-                  printf( "Warning: Storage for csv numbers is nearly full (%ld): allocating more storage\n", totalNumbers );
+                  printf( "Warning: Storage for csv numbers is nearly full (%lu): allocating more storage\n", totalNumbers );
                 storageSize += COMP_NUMBER;    /* increase storage size to avoid overflow */
-                if (( storage = realloc( storage, storageSize * sizeof( long double ))) == NULL ) {
+                if (( storage = realloc( storage, storageSize * SIZEOF_REAL_NUM )) == NULL ) {
                   fprintf( stderr, "Error: unable to get more memory to store more csv numbers at input line %ld: Aborting\n", lineNumber );
                   return( -2 );
                 }
@@ -539,34 +685,36 @@ int  main( int argc, char * argv[])  {
         printf( "Warning: unable to calulate median values\n" );
       /* Calculate means for use in the Std Dev calcs */
       for( i = 0; i < numOfColumns; i++ )
-        columnsMeans[ i ] = columnsSums[ i ] / ( long double ) columnsSizes[ i ];
+        columnsMeans[ i ] = columnsSums[ i ] / ( REAL_NUM_PREC ) columnsSizes[ i ];
       if ( calcStdDev( numOfColumns, columnsSizes, storage, columnsEstPopStdDev, columnsSampleStdDev, columnsMeans ) != numOfColumns )
         printf( "Warning: unable to calulate Std. Dev. values\n" );
-      /* Re-calculate means after use in the Std Dev calcs & then calc Pearson's measure of skewness */
+      /* Re-calculate means after use in the Std. Dev. calcs & then calc Pearson's measure of skewness */
       for( i = 0; i < numOfColumns; i++ )  {
-        columnsMeans[ i ] = columnsSums[ i ] / ( long double ) columnsSizes[ i ];
-        columnsPearsonSkew[ i ] = ( long double ) 3 * ( columnsMeans[ i ] - columnsMedians[ i ]) / columnsEstPopStdDev[ i ];
+        columnsMeans[ i ] = columnsSums[ i ] / ( REAL_NUM_PREC ) columnsSizes[ i ];
+        if (( columnsEstPopStdDev[ i ] == ( REAL_NUM_PREC ) +0.0 ) || ( columnsEstPopStdDev[ i ] == ( REAL_NUM_PREC ) -0.0 ))  {
+          printf( "Warning: Pearson's Skewness cannot be calculated when Std. Dev. is zero\n" );
+          columnsPearsonSkew[ i ] =  ( REAL_NUM_PREC ) 0.0;
+        }
+        else
+          columnsPearsonSkew[ i ] = ( REAL_NUM_PREC ) 3 * ( columnsMeans[ i ] - columnsMedians[ i ]) / columnsEstPopStdDev[ i ];
       }
       /* Print out the stats in various forms of csv format */
       if( lineModeFlag )  printf( "\n" );   /* output a blank line if in line mode */
       if ( verboseFlag )  outputStatsInRowForm( numOfColumns );   /* only output stats in row form in vebose mode */
-      /* print column stats in column form */
-      if ( verboseFlag || headerFlag )  {
-        printf( "\"Stat. Type\", " );
-        for( i = 1; i < numOfColumns; i++ )  printf( "\"Column %d\", ", i );
-        printf( "\"Column %d\"\n", numOfColumns );
-      }
-      printColumnsStatsInColumns( numOfColumns, columnsSizes, ", ", verboseFlag );
+      outputStatsInColumnForm( numOfColumns );
 #ifdef  DEBUG
       if ( debugFlag )  {
-        printf( "\ncsv storage listing\n" );
-        for( i = 0; i < totalNumbers; i++ )  printf( "%d : %Lg\n", i, storage[ i ]);
+        printf( "\nDebug: csv storage listing\n" );
+        for( i = 0; ( size_t ) i < totalNumbers; i++ )  {
+          printf( "%d : ", i );
+          printNumberAndSeparator( storage[ i ], "\n" );
+        }
       }
 #endif
       if ( storage != NULL )  free( storage );
     }
   }
-  if( lineModeFlag )  printf( "\n" );   /* output an extra line feed */
-  if( helpFlag )  usage();
+  if ( lineModeFlag )  printf( "\n" );   /* output an extra line feed */
+  if ( helpFlag )  usage();
   return( exitFlag );
 }

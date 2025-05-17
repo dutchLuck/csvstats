@@ -1,5 +1,6 @@
 
 ++++++++++ csvstats small.csv  +++Small valid 2 column file, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 10, 10
 +90, +100
 +9, +10
@@ -7,12 +8,13 @@
 +18, +19
 +0, +1
 +18, +18
-+5.74456264653803, +5.74456264653803
-+6.05530070819498, +6.05530070819498
++5.7445626465380286, +5.7445626465380286
++6.0553007081949835, +6.0553007081949835
 +0, +0
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, no options check++++++++++
 
 ++++++++++ csvstats -H small.csv  +++Small valid 2 column file, with header option check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 "Stat. Type", "Column 1", "Column 2"
 "Count", 10, 10
 "Sum", +90, +100
@@ -21,12 +23,13 @@
 "Most +ve", +18, +19
 "Most -ve", +0, +1
 "Range", +18, +18
-"Sample Std. Dev.", +5.74456264653803, +5.74456264653803
-"Est. Pop. Std. Dev.", +6.05530070819498, +6.05530070819498
+"Sample Std. Dev.", +5.7445626465380286, +5.7445626465380286
+"Est. Pop. Std. Dev.", +6.0553007081949835, +6.0553007081949835
 "Pearson's Skew", +0, +0
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, with header option check++++++++++
 
 ++++++++++ csvstats -H -n small.csv  +++Small valid 2 column file, with header and extra line options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1", "Column 2"
 "Count", 10, 10
@@ -36,133 +39,144 @@
 "Most +ve", +18, +19
 "Most -ve", +0, +1
 "Range", +18, +18
-"Sample Std. Dev.", +5.74456264653803, +5.74456264653803
-"Est. Pop. Std. Dev.", +6.05530070819498, +6.05530070819498
+"Sample Std. Dev.", +5.7445626465380286, +5.7445626465380286
+"Est. Pop. Std. Dev.", +6.0553007081949835, +6.0553007081949835
 "Pearson's Skew", +0, +0
 
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, with header and extra line options check++++++++++
 
 ++++++++++ csvstats cols7rows4.csv +++Small valid 7 column file and no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 4, 4, 4, 4, 4, 4, 4
--2.94384341, -2.96165279, -2.99377781, -0.18179788, +0.1744702, +0.10207896, +0.05141127
--0.721921705, -0.730826395, -0.746888905, -0.04589894, +0.0422351, +0.02603948, +0.010705635
--0.7359608525, -0.7404131975, -0.7484444525, -0.04544947, +0.04361755, +0.02551974, +0.0128528175
--0.7, -0.7, -0.7, -0.04, +0.05, +0.03, +0.02
--0.8, -0.8, -0.8, -0.05, +0.04, +0.02, +0.01
-+0.1, +0.1, +0.1, +0.01, +0.01, +0.01, +0.01
-+0.0380407368820158, +0.0366320458365897, +0.035389542636558, +0.00356398979809146, +0.00379620442053639, +0.00357353181986673, +0.00413647104284634
-+0.0439256593580071, +0.0422990430494435, +0.040864323935429, +0.00411534093863437, +0.00438347928819106, +0.0041263591163155, +0.00477638534016485
--0.958834610921377, -0.679930452950944, -0.114198451132431, +0.327654505448444, +0.946131994092646, -0.377868226213006, +1.34862391562773
+-2.9438434099999995, -2.9616527899999996, -2.9937778100000001, -0.18179788000000002, +0.17447020000000002, +0.10207896, +0.051411269999999995
+-0.72192170499999997, -0.73082639500000002, -0.74688890500000005, -0.045898939999999999, +0.042235099999999998, +0.02603948, +0.010705635
+-0.73596085249999987, -0.7404131974999999, -0.74844445250000002, -0.045449470000000006, +0.043617550000000005, +0.025519739999999999, +0.012852817499999999
+-0.69999999999999996, -0.69999999999999996, -0.69999999999999996, -0.040000000000000001, +0.050000000000000003, +0.029999999999999999, +0.02
+-0.80000000000000004, -0.80000000000000004, -0.80000000000000004, -0.050000000000000003, +0.040000000000000001, +0.02, +0.01
++0.10000000000000009, +0.10000000000000009, +0.10000000000000009, +0.010000000000000002, +0.010000000000000002, +0.0099999999999999985, +0.01
++0.03804073688201582, +0.036632045836589695, +0.035389542636558025, +0.0035639897980914602, +0.0037962044205363875, +0.0035735318198667257, +0.0041364710428463351
++0.043925659358007123, +0.042299043049443534, +0.040864323935429027, +0.0041153409386343685, +0.0043834792881910613, +0.004126359116315495, +0.0047763853401648479
+-0.95883461092137723, -0.67993045295094445, -0.11419845113243117, +0.32765450544844427, +0.94613199409264614, -0.37786822621300614, +1.3486239156277284
 ++++++++++ Shell got Return code number 0 for small valid file tmp.csv, no options check++++++++++
 
 ++++++++++ csvstats heights.csv +++Somewhat longer file with 2 columns, 1 column the reverse of the other++++++++++
+Std. Dev. with double precision (8 byte numbers)
 2113, 2113
 +146765, +146765
 +70, +70
-+69.4581164221486, +69.4581164221486
++69.458116422148606, +69.458116422148606
 +78, +78
 +56, +56
 +22, +22
-+2.67453180048455, +2.67453180048454
-+2.67516490069474, +2.67516490069473
--0.607682439737452, -0.607682439737457
++2.6745318004845537, +2.6745318004845351
++2.6751649006947433, +2.6751649006947251
+-0.6076824397374524, -0.6076824397374565
 ++++++++++ Shell got Return code number 0 for small file with lengthier lines++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_PiDigits.dat +++Long file of 1 column of single digits, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 5000
 "Sum", +22674
-"Mean", +4.5348
-"Sample Std. Dev.", +2.86705231204455
-"Est. Pop. Std. Dev.", +2.86733906028871
+"Mean", +4.5347999999999997
+"Sample Std. Dev.", +2.8670523120445481
+"Est. Pop. Std. Dev.", +2.8673390602887063
 
 ++++++++++ Shell got Return code number 0 for long file with single column (4.5348, 2.86733906028871)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Lew.dat +++Long file of 1 column of single digits, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 200
 "Sum", -35487
 "Mean", -177.435
-"Sample Std. Dev.", +276.637968787728
-"Est. Pop. Std. Dev.", +277.332168044316
+"Sample Std. Dev.", +276.63796878772814
+"Est. Pop. Std. Dev.", +277.33216804431618
 
 ++++++++++ Shell got Return code number 0 for 200 long file with single column (-177.435, 277.332168044316)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Lottery.dat +++Long file of 1 column of single digits, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 218
 "Sum", +113133
-"Mean", +518.95871559633
-"Sample Std. Dev.", +291.029922390792
-"Est. Pop. Std. Dev.", +291.699727470969
+"Mean", +518.95871559633031
+"Sample Std. Dev.", +291.02992239079242
+"Est. Pop. Std. Dev.", +291.69972747096904
 
 ++++++++++ Shell got Return code number 0 for 218 long file with single column (518.958715596330, 291.699727470969)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Mavro.dat +++Long file of 1 column of single digits, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 50
 "Sum", +100.0928
-"Mean", +2.001856
-"Sample Std. Dev.", +0.000424810546008485
-"Est. Pop. Std. Dev.", +0.000429123454003085
+"Mean", +2.0018560000000001
+"Sample Std. Dev.", +0.0004248105460084853
+"Est. Pop. Std. Dev.", +0.00042912345400308546
 
 ++++++++++ Shell got Return code number 0 for 50 long file with single column (2.001856, 0.000429123454003053)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column of single digits, no options check++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 100
-"Sum", +29985.24
-"Mean", +299.8524
-"Sample Std. Dev.", +0.0786145024788672
-"Est. Pop. Std. Dev.", +0.0790105478190506
+"Sum", +29985.239999999991
+"Mean", +299.85239999999993
+"Sample Std. Dev.", +0.078614502478867226
+"Est. Pop. Std. Dev.", +0.079010547819050619
 
 ++++++++++ Shell got Return code number 0 for 100 long file with single column (299.8524, 0.0790105478190518)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accurracy file of 3 large close numbers++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 3
 "Sum", +30000006
 "Mean", +10000002
-"Sample Std. Dev.", +0.816496580927726
+"Sample Std. Dev.", +0.81649658092772603
 "Est. Pop. Std. Dev.", +1
 
 ++++++++++ Shell got Return code number 0 for 1st NIST numerical accuracy file ( 10000002, 1)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accurracy file of close numbers++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 1001
-"Sum", +1201.19999999999
-"Mean", +1.19999999999999
-"Sample Std. Dev.", +0.0999500374687765
-"Est. Pop. Std. Dev.", +0.0999999999999992
+"Sum", +1201.1999999999889
+"Mean", +1.1999999999999889
+"Sample Std. Dev.", +0.099950037468776481
+"Est. Pop. Std. Dev.", +0.099999999999999159
 
 ++++++++++ Shell got Return code number 0 for 2nd NIST numerical accuracy file ( 1.2, 0.1)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accurracy file of close numbers++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 1001
-"Sum", +1001000200.2
-"Mean", +1000000.2
-"Sample Std. Dev.", +0.0999500375036847
-"Est. Pop. Std. Dev.", +0.100000000034925
+"Sum", +1001000200.1999993
+"Mean", +1000000.1999999994
+"Sample Std. Dev.", +0.099950037503684724
+"Est. Pop. Std. Dev.", +0.10000000003492485
 
 ++++++++++ Shell got Return code number 0 for 3rd NIST numerical accuracy file (1000000.2, 0.1)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accurracy file of large close numbers++++++++++
+Std. Dev. with double precision (8 byte numbers)
 
 "Stat. Type", "Column 1"
 "Count", 1001
-"Sum", +10010000200.2001
-"Mean", +10000000.2000001
-"Sample Std. Dev.", +0.0999500380272917
-"Est. Pop. Std. Dev.", +0.100000000558794
+"Sum", +10010000200.200098
+"Mean", +10000000.200000098
+"Sample Std. Dev.", +0.099950038027291688
+"Est. Pop. Std. Dev.", +0.10000000055879354
 
 ++++++++++ Shell got Return code number 0 for 4th NIST numerical accuracy file (10000000.2, 0.1)++++++++++
