@@ -14,7 +14,7 @@ NAME3=statsFun
 OP_FILE_NAME=Makefile
 COMPILER=cc
 OPTIONS="-Wall -pedantic -Wextra"
-LNK_OPTIONS=""
+LNK_OPTIONS="-lm"
 TRGT=$NAME
 SRC=$NAME.c
 SRC1=$NAME1.c
@@ -39,7 +39,7 @@ elif [[ "$OSTYPE" == "msys" ]] ; then
 fi
 #
 echo "$TRGT: $OBJ $OBJ1 $OBJ2 $OBJ3" > $OP_FILE_NAME
-echo -e "\t$COMPILER -o "'$@ $^' >> $OP_FILE_NAME
+echo -e "\t$COMPILER -o "'$@ $^'" $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "$OBJ: $SRC $HDR1 $HDR2" >> $OP_FILE_NAME
