@@ -2,32 +2,67 @@
 #
 # C O N F I G U R E
 #
-# configure last edited on Thu Apr 11 10:30:12 2024 
+# configure last edited on Thu Jun 13 22:40:49 2024 
 #
-NAME1=csvstats
+# This script writes a Makefile
+#
+NAME=csvstats
+NAME1=config
+NAME2=genFun
+NAME3=statsFun
 #
 OP_FILE_NAME=Makefile
 COMPILER=cc
 OPTIONS="-Wall -pedantic -Wextra"
-LNK_OPTIONS="-lm"
-TRGT=$NAME1
+LNK_OPTIONS=""
+TRGT=$NAME
+SRC=$NAME.c
 SRC1=$NAME1.c
+SRC2=$NAME2.c
+SRC3=$NAME3.c
+OBJ=$NAME.o
 OBJ1=$NAME1.o
+OBJ2=$NAME2.o
+OBJ3=$NAME3.o
+HDR1=$NAME1.h
+HDR2=$NAME2.h
+HDR3=$NAME3.h
 #
 # echo $OSTYPE
 #
 if [[ "$OSTYPE" == "cygwin" ]] ; then
-  TRGT=$NAME1.exe
+  TRGT=$NAME.exe
 elif [[ "$OSTYPE" == "msys" ]] ; then
-  TRGT=$NAME1.exe
+  TRGT=$NAME.exe
   COMPILER=gcc
+  LNK_OPTIONS="-static"
 fi
 #
-echo "$TRGT: $OBJ1" > $OP_FILE_NAME
-echo -e "\t$COMPILER -o "'$@ $^' $LNK_OPTIONS >> $OP_FILE_NAME
+echo "$TRGT: $OBJ $OBJ1 $OBJ2 $OBJ3" > $OP_FILE_NAME
+echo -e "\t$COMPILER -o "'$@ $^' >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
-echo "$OBJ1: $SRC1" >> $OP_FILE_NAME
+echo "$OBJ: $SRC $HDR1 $HDR2" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -c -UDEBUG "'$<' >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "$SRC1: $NAME1.json proto.c write_config.py" >> $OP_FILE_NAME
+echo -e "\tpython3 write_config.py" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "$HDR1: $NAME1.json proto.h write_config.py" >> $OP_FILE_NAME
+echo -e "\tpython3 write_config.py" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "$OBJ1: $SRC1 $HDR1 $HDR2" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -c -UDEBUG "'$<' >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "$OBJ2: $SRC2 $HDR2" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -c -UDEBUG "'$<' >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "$OBJ3: $SRC3 $HDR1 $HDR2 $HDR3" >> $OP_FILE_NAME
 echo -e "\t$COMPILER $OPTIONS -c -UDEBUG "'$<' >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
@@ -40,33 +75,10 @@ echo -e "\tcd test; ./chk" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "clean:" >> $OP_FILE_NAME
-echo -e "\trm -f $TRGT $TRGT.exe *.o" >> $OP_FILE_NAME
+echo -e "\trm -f $TRGT $NAME.o $NAME1.o $NAME2.o $NAME3.o" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "debug: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -c $SRC1" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
-echo "" >> $OP_FILE_NAME
-#
-echo "debug_double: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -c $SRC1" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
-echo "" >> $OP_FILE_NAME
-#
-echo "debug_float: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -c $SRC1" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -o $TRGT $OBJ1 $LNK_OPTIONS" >> $OP_FILE_NAME
-echo "" >> $OP_FILE_NAME
-#
-echo "valgrind: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
-echo "" >> $OP_FILE_NAME
-#
-echo "valgrind_double: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
-echo "" >> $OP_FILE_NAME
-#
-echo "valgrind_float: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -g -o $TRGT $SRC1 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #

@@ -1,0 +1,112 @@
+{
+	"posParam1": {
+		"type": "positionParam",
+		"name": "[FILE_1 .. [FILE_N]]",
+		"help": "Optional Name(s) of File(s) to process"
+	},
+	"average": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "A",
+		"long": "average",
+		"help": "...... disable Arithmetic Mean (i.e. average ) output."
+	},
+	"debug": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "D",
+		"long": "debug",
+		"help": "...... enable debug output mode"
+	},
+	"header": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "H",
+		"long": "header",
+		"help": "...... enable Header output mode"
+	},
+	"help": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "h",
+		"long": "help",
+		"help": "...... this help / usage information"
+	},
+	"median": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "M",
+		"long": "median",
+		"help": "...... disable Median value output"
+	},
+	"negetive": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "N",
+		"long": "negetive",
+		"help": "...... disable most Negetive value output"
+	},
+	"newline": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "n",
+		"long": "newline",
+		"help": "...... disable the linefeed terminator on the output"
+	},
+	"output": {
+		"type": "optStr",
+		"default": "",
+		"short": "o",
+		"long": "output_file",
+		"help": "TXT .. send the output to a file named 'TXT'"
+	},
+	"positive": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "P",
+		"long": "positive",
+		"help": "...... disable most Positive value output"
+	},
+	"pearson": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "p",
+		"long": "pearson",
+		"help": "...... disable Pearson's skew value output"
+	},
+	"range": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "R",
+		"long": "range",
+		"help": "...... disable Range (i.e. most Pos - most Neg) value output"
+	},
+	"row": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "r",
+		"long": "row",
+		"help": "...... enable output in Row format"
+	},
+	"stddev": {
+		"type": "optFlg",
+		"default": "true",
+		"short": "S",
+		"long": "stddev",
+		"help": "...... disable Standard Deviation value output"
+	},
+	"verbose": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "v",
+		"long": "verbose",
+		"help": "...... enable more verbose information output"
+	},
+	"version": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "V",
+		"long": "version",
+		"help": "...... enable version information output"
+	}
+}
