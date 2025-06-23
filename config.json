@@ -11,12 +11,26 @@
 		"long": "average",
 		"help": "...... disable Arithmetic Mean (i.e. average ) output."
 	},
+	"comment": {
+		"type": "optChr",
+		"default": "#",
+		"short": "c",
+		"long": "comment",
+		"help": "CHR .. use CHR, not hash as the comment delimiter"
+	},
 	"debug": {
 		"type": "optFlg",
 		"default": "false",
 		"short": "D",
 		"long": "debug",
 		"help": "...... enable debug output mode"
+	},
+	"delimiter": {
+		"type": "optChr",
+		"default": ",",
+		"short": "d",
+		"long": "delimiter",
+		"help": "CHR .. use CHR, not comma as the column separator"
 	},
 	"header": {
 		"type": "optFlg",
@@ -51,7 +65,7 @@
 		"default": "false",
 		"short": "n",
 		"long": "newline",
-		"help": "...... disable the linefeed terminator on the output"
+		"help": "...... enable extra blank output lines"
 	},
 	"output": {
 		"type": "optStr",

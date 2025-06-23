@@ -2,7 +2,7 @@
 #
 # C O N F I G U R E
 #
-# configure last edited on Thu Jun 13 22:40:49 2024 
+# configure last edited on Mon Jun 23 18:10:47 2025 
 #
 # This script writes a Makefile
 #
@@ -79,6 +79,34 @@ echo -e "\trm -f $TRGT $NAME.o $NAME1.o $NAME2.o $NAME3.o" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
 echo "debug: clean" >> $OP_FILE_NAME
-echo -e "\t$COMPILER $OPTIONS -DDEBUG -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "debug_ldouble: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "debug_double: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "debug_float: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind_ldouble: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DLDBL_PREC -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind_double: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "valgrind_float: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -DDEBUG -DFLT_PREC -g -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #

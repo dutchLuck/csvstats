@@ -62,30 +62,50 @@ echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column
 echo "${TEN_PLUSS} Shell got Return code number $? for 100 long file with single column (299.8524, 0.0790105478190518)${TEN_PLUSS}"
 #
 echo ""
-echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accurracy file of 3 large close numbers${TEN_PLUSS}"
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accuracy file of 3 large close numbers${TEN_PLUSS}"
 ../$EXE -HMNnPRp NIST_StRD_NumAcc1.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for 1st NIST numerical accuracy file ( 10000002, 1)${TEN_PLUSS}"
 #
 echo ""
-echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accurracy file of close numbers${TEN_PLUSS}"
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accuracy file of close numbers${TEN_PLUSS}"
 ../$EXE -HMNnPRp NIST_StRD_NumAcc2.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for 2nd NIST numerical accuracy file ( 1.2, 0.1)${TEN_PLUSS}"
 #
 echo ""
-echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accurracy file of close numbers${TEN_PLUSS}"
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accuracy file of close numbers${TEN_PLUSS}"
 ../$EXE -HMNnPRp NIST_StRD_NumAcc3.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for 3rd NIST numerical accuracy file (1000000.2, 0.1)${TEN_PLUSS}"
 #
 echo ""
-echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accurracy file of large close numbers${TEN_PLUSS}"
+echo "${TEN_PLUSS} $EXE -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accuracy file of large close numbers${TEN_PLUSS}"
 ../$EXE -HMNnPRp NIST_StRD_NumAcc4.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for 4th NIST numerical accuracy file (10000000.2, 0.1)${TEN_PLUSS}"
 #
 echo ""
-echo '${TEN_PLUSS} cat data.csv | $EXE -v -o stdinTest.tst  +++stdin input with file output check${TEN_PLUSS}'
+echo ${TEN_PLUSS} '$EXE -H -c "!" -d ";" data.txt  +++ file with semi colon as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -c "!" -d ";" data.txt
+echo "${TEN_PLUSS} Shell got Return code number $? for semi colon column separator file${TEN_PLUSS}"
+#
+echo ""
+echo ${TEN_PLUSS} '$EXE -H -d "\\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -d "\t" data.tab
+echo "${TEN_PLUSS} Shell got Return code number $? for tab column separator file${TEN_PLUSS}"
+#
+echo ""
+echo ${TEN_PLUSS} '$EXE -H -d "\\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator'${TEN_PLUSS}
+../$EXE -H -d "\x9" data.tab
+echo "${TEN_PLUSS} Shell got Return code number $? for tab column separator file${TEN_PLUSS}"
+#
+echo ""
+echo ${TEN_PLUSS} '$EXE -H -d " " data.dat  +++ file with just ASCII space as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -d " " data.dat
+echo "${TEN_PLUSS} Shell got Return code number $? for space column separator file${TEN_PLUSS}"
+#
+echo ""
+echo ${TEN_PLUSS} 'cat data.csv | $EXE -v -o stdinTest.tst  +++stdin input with file output check'${TEN_PLUSS}
 cat data.csv | ../$EXE -v -o stdinTest.tst
 echo "${TEN_PLUSS} Shell got Return code number $? for input through stdin and output to a File${TEN_PLUSS}"
-echo '${TEN_PLUSS} cat stdinTest.tst  +++show output file check${TEN_PLUSS}'
+echo "${TEN_PLUSS} cat stdinTest.tst  +++show output file check${TEN_PLUSS}"
 cat stdinTest.tst
 echo "${TEN_PLUSS} Shell got Return code number $? for File output${TEN_PLUSS}"
 #

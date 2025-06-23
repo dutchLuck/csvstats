@@ -1,8 +1,9 @@
 /*
  * C O N F I G . C
  *
- * Last Modified on Wed Jul 31 13:25:15 2024
+ * Last Modified on Mon Jun 23 19:14:05 2025
  *
+ * 2025-Jun-22 Added Chr option handling
  */
 
 #include <stdio.h>    /* printf() */
@@ -46,12 +47,46 @@ int  configureDoubleOption( struct optDbl *  dblStructPtr, char *  dblString ) {
 }
 
 
+int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
+  size_t  len;
+
+  len = strlen( chrString );
+  chrStructPtr->active = TRUE;
+  chrStructPtr->optionChr = ( int ) *chrString;
+  if (( *chrString == '\\' ) && ( len > ( size_t ) 1 ) && ( chrString[ 1 ] != '\\'))  {
+    switch ( chrString[ 1 ] )  {
+      case '0' : chrStructPtr->optionChr = '\0'; break;   /* NULL */
+      case 'a' : chrStructPtr->optionChr = '\a'; break;   /* audible bell */
+      case 'b' : chrStructPtr->optionChr = '\b'; break;   /* backspace */
+      case 'f' : chrStructPtr->optionChr = '\f'; break;   /* form-feed */
+      case 'n' : chrStructPtr->optionChr = '\n'; break;   /* newline */
+      case 'r' : chrStructPtr->optionChr = '\r'; break;   /* carriage return */
+      case 't' : chrStructPtr->optionChr = '\t'; break;   /* horizontal tab */
+      case 'x' :
+      case 'X' : {
+        if ( len > ( size_t ) 3 )  {
+          chrStructPtr->optionChr = convert2HexChrNibblesToInt( chrString + 2 );
+        }
+        else if ( len > ( size_t ) 2 )  {
+          chrStructPtr->optionChr = convertHexChrNibbleToInt( chrString + 2 );
+        }
+        break;
+      }
+      default :  chrStructPtr->optionChr = ','; break;    /* reinstate comma */
+    }
+    chrStructPtr->optionChr = limitIntegerValueToEqualOrWithinRange( chrStructPtr->optionChr , 0, 127 );
+  }
+  return( chrStructPtr->active );
+}
+
 // Functions for Command Line Options Configuration from JSON Data
 void  usage( struct config *  opt, char *  exeName )  {
   printf( "Usage:\n");
-  printf( " %s [-A][-D][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-v][-V] [FILE_1 .. [FILE_N]]\n", exeName );
+  printf( " %s [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-v][-V] [FILE_1 .. [FILE_N]]\n", exeName );
   printf( " %s %s\n", opt->A.optID, opt->A.helpStr ); /* average */
+  printf( " %s %s\n", opt->c.optID, opt->c.helpStr ); /* comment */
   printf( " %s %s\n", opt->D.optID, opt->D.helpStr ); /* debug */
+  printf( " %s %s\n", opt->d.optID, opt->d.helpStr ); /* delimiter */
   printf( " %s %s\n", opt->H.optID, opt->H.helpStr ); /* header */
   printf( " %s %s\n", opt->h.optID, opt->h.helpStr ); /* help */
   printf( " %s %s\n", opt->M.optID, opt->M.helpStr ); /* median */
@@ -76,10 +111,20 @@ void  initConfiguration ( struct config *  opt )  {
   opt->A.active = FALSE;
   opt->A.optID = "-A";
   opt->A.helpStr = "...... disable Arithmetic Mean (i.e. average ) output.";
+// comment: optChr
+  opt->c.active = FALSE;
+  opt->c.optID = "-c";
+  opt->c.helpStr = "CHR .. use CHR, not hash as the comment delimiter";
+  opt->c.optionChr = '#';
 // debug: optFlg
   opt->D.active = FALSE;
   opt->D.optID = "-D";
   opt->D.helpStr = "...... enable debug output mode";
+// delimiter: optChr
+  opt->d.active = FALSE;
+  opt->d.optID = "-d";
+  opt->d.helpStr = "CHR .. use CHR, not comma as the column separator";
+  opt->d.optionChr = ',';
 // header: optFlg
   opt->H.active = FALSE;
   opt->H.optID = "-H";
@@ -99,7 +144,7 @@ void  initConfiguration ( struct config *  opt )  {
 // newline: optFlg
   opt->n.active = FALSE;
   opt->n.optID = "-n";
-  opt->n.helpStr = "...... disable the linefeed terminator on the output";
+  opt->n.helpStr = "...... enable extra blank output lines";
 // output: optStr
   opt->o.active = FALSE;
   opt->o.optID = "-o";
@@ -142,7 +187,9 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
   while ((c = getopt (argc, argv, OPTIONS )) != -1 ) {
     switch ( c ) {
       case 'A': opt->A.active = TRUE; break; /* average */
+      case 'c': configureChrOption( &opt->c, optarg ); break; /* comment */
       case 'D': opt->D.active = TRUE; break; /* debug */
+      case 'd': configureChrOption( &opt->d, optarg ); break; /* delimiter */
       case 'H': opt->H.active = TRUE; break; /* header */
       case 'h': opt->h.active = TRUE; break; /* help */
       case 'M': opt->M.active = TRUE; break; /* median */
@@ -157,9 +204,11 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
       case 'v': opt->v.active = TRUE; break; /* verbose */
       case 'V': opt->V.active = TRUE; break; /* version */
       case '?' : {
-        if ( strchr( "o", optopt ) != NULL ) {
+        if ( strchr( "cdo", optopt ) != NULL ) {
           fprintf (stderr, "Error: Option -%c requires an argument.\n", optopt);
           switch ( optopt ) {
+            case 'c': opt->c.active = FALSE; break;
+            case 'd': opt->d.active = FALSE; break;
             case 'o': opt->o.active = FALSE; break;
           }
         }
@@ -176,7 +225,11 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
 
 void  configuration_status( struct config *  opt )  {
   printf( "Debug: option -A is %sctive (-A %s)\n", (opt->A.active) ? "a" : "ina", opt->A.helpStr); /* average */
+  printf( "Debug: option -c is %sctive (-c %s)\n", (opt->c.active) ? "a" : "ina", opt->c.helpStr); /* comment */
+  printf( "Debug: option -c value is '%c'\n", opt->c.optionChr); /* comment */
   printf( "Debug: option -D is %sctive (-D %s)\n", (opt->D.active) ? "a" : "ina", opt->D.helpStr); /* debug */
+  printf( "Debug: option -d is %sctive (-d %s)\n", (opt->d.active) ? "a" : "ina", opt->d.helpStr); /* delimiter */
+  printf( "Debug: option -d value is '%c'\n", opt->d.optionChr); /* delimiter */
   printf( "Debug: option -H is %sctive (-H %s)\n", (opt->H.active) ? "a" : "ina", opt->H.helpStr); /* header */
   printf( "Debug: option -h is %sctive (-h %s)\n", (opt->h.active) ? "a" : "ina", opt->h.helpStr); /* help */
   printf( "Debug: option -M is %sctive (-M %s)\n", (opt->M.active) ? "a" : "ina", opt->M.helpStr); /* median */

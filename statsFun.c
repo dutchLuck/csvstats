@@ -1,10 +1,11 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Fri Jun 20 21:54:17 2025, by O.F.H.
+ * last modified on Mon Jun 23 11:04:19 2025, by O.F.H.
  *
  * written by O.Holland
  *
+ * Added ability to use alternate column separator to comma
  * Fixed compile error when -DDEBUG is used
  * 
  */
@@ -73,7 +74,7 @@ REAL_NUM_PREC *  storage;   /* global storage for input numbers from all columns
 
 /*----------------------------------*/
 
-int  processFirstLineOfNumbers( char *  linePtr )  {
+int  processFirstLineOfNumbers( char *  linePtr, int  delimiterChr )  {
 	int  cnt, result;
 	REAL_NUM_PREC *  sumsPtr;
 	REAL_NUM_PREC *  mostPosPtr;
@@ -91,8 +92,14 @@ int  processFirstLineOfNumbers( char *  linePtr )  {
 	  *storagePtr++ = *sumsPtr;     /* put new value in storage */
 	  *mostPosPtr++  = *sumsPtr;
 	  *mostNegPtr++  = *sumsPtr++;
-	  linePtr = strchr( linePtr, ',' );
-	  if( linePtr != NULL )  linePtr += 1;	/* step over comma */
+	  if ( delimiterChr == '\0' )  {	/* Can't handle delimiter being '\0' as it also means end-of-line */
+		linePtr += strcspn( linePtr, ",;\t" );		/* Try shifting pionter to the most likely separators if NULL is specified */
+		if ( *linePtr == '\0' )  linePtr = NULL;	/* if nothing was found except end-of-line then set to NULL */
+	  }
+	  else  {
+		linePtr = strchr( linePtr, delimiterChr );
+	  }
+	  if( linePtr != NULL )  linePtr += 1;	/* step over delimiter (i.e. comma) */
 	} while(( linePtr != NULL ) && ( cnt < MAX_NUM_OF_COLS )); 
 	return( cnt );
 }
@@ -100,7 +107,7 @@ int  processFirstLineOfNumbers( char *  linePtr )  {
   
 /*----------------------------------*/
   
-int  processLine( char *  linePtr, int  numberOfColumns )  {
+int  processLine( char *  linePtr, int  delimiterChr, int  numberOfColumns )  {
 	int  cnt;
 	REAL_NUM_PREC  dTmp;
 	REAL_NUM_PREC *  sumsPtr;
@@ -124,8 +131,14 @@ int  processLine( char *  linePtr, int  numberOfColumns )  {
 		else  mostNegPtr++;
 		cnt += 1;   /* set up to do next column */
 	  }
-	  linePtr = strchr( linePtr, ',' );
-	  if( linePtr != NULL )  linePtr += 1;	/* step over comma */
+	  if ( delimiterChr == '\0' )  {	/* Can't handle NULL as it also means end-of-line */
+		linePtr += strcspn( linePtr, ",;\t" );	/* Try the most likely separators if NULL is specified */
+		if ( *linePtr == '\0' )  linePtr = NULL;	/* if nothing was found except end-of-line then set to NULL */
+	  }
+	  else  {
+		linePtr = strchr( linePtr, delimiterChr );
+	  }
+	  if( linePtr != NULL )  linePtr += 1;	/* step over delimiter (i.e. comma)  */
 	} while(( linePtr != NULL ) && ( cnt < numberOfColumns )); 
 	return( cnt );
 }
@@ -459,7 +472,6 @@ void  outputStatsInRowForm( struct config *  cfg, FILE *  ofp, int  numOfColumns
 		printf( "\n" );
 	}
 	printColumnsStatsInRows( cfg, ofp, numOfColumns, columnsSizes, ", ", FALSE );
-	if( cfg->n.active )  printf( "\n" );   /* output a blank line if in line mode */
 }
 
 
@@ -490,20 +502,20 @@ size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
     }
     else  {
 		while( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )  {
-			if (( *bfr == '\0' ) || ( *bfr == '#' ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {   /* skip comments or blank lines */
+			if (( *bfr == '\0' ) || ( *bfr == cfg->c.optionChr ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {   /* skip comments or blank lines */
 				if ( cfg->D.active )  printf( "Debug: Warning: skipping a line (blank or comment) - %s", ( *bfr == '#' ) ? bfr : "\n" );
 			}
 			else  {
 				lineNumber += 1;
 				if( lineNumber == (size_t) 1 )  {
 					if ( cfg->D.active )  printf( "Debug: Line Number: %lu, Line String: \"%s\"", lineNumber, bfr );
-					*numOfColumns = processFirstLineOfNumbers( bfr );
+					*numOfColumns = processFirstLineOfNumbers( bfr, cfg->d.optionChr );
 					totalNumbers = (size_t) *numOfColumns;
 					if( cfg->D.active )
 						printf( "Debug: %d Column(s) found in the first line of numbers.\n", *numOfColumns );
 				}
 				else  {
-					if(( i = processLine( bfr, totalNumbers )) != *numOfColumns )  {
+					if(( i = processLine( bfr, cfg->d.optionChr, totalNumbers )) != *numOfColumns )  {
 						if ( cfg->v.active )
 							printf( "Warning: %d values in line %ld doesn't match the expected %d values found in the first line\n",
 								i, lineNumber, *numOfColumns );
@@ -564,6 +576,7 @@ int  processInToOut( struct config *  cfg, FILE *  fp, FILE *  ofp )  {
 
 	if (( numbersProcessed = readInput( cfg, fp, &numberOfColumns )) > 0 )  {
 		writeOutput( cfg, ofp, numberOfColumns );
+		if( cfg->n.active )  printf( "\n" );   /* output a blank line if new line mode is active */
 	}
 	if ( ! feof( fp ))  perror( "Error when reading input file" );
 	fflush( ofp );

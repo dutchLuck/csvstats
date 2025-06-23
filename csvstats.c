@@ -3,7 +3,10 @@
  *
  * Last Modified on Fri Jun 20 21:54:07 2025
  *
- * .
+ * Read comma separated values from stdin or files
+ * and calculate basic statistics like arithmetic
+ * mean, median and standard deviation on the
+ * values.
  * 
  */
 
@@ -21,6 +24,8 @@
 #ifndef TRUE
 #define TRUE (!(FALSE))
 #endif
+
+#define  NAME_VERSION  "csvstats 0v5 (2025-06-23)"
 
 char *  exePath = NULL;
 char *  exeName = NULL;
@@ -49,7 +54,7 @@ int  main (int argc, char *  argv[])  {
   indexToFirstNonConfig = setConfiguration( argc, argv, &config );
 
   /* if -V specified then show version information */
-  if ( config.V.active || config.D.active )  printf( "csvstats 0v4 (2025-06-18)\n");
+  if ( config.V.active || config.D.active )  printf( "%s\n", NAME_VERSION );
 
   /* if -h specified then show the help/usage information and finish */
   if ( config.D.active ) {

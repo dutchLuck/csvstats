@@ -38,6 +38,7 @@
 "Sample Std. Dev.", +5.7445626465380286, +5.7445626465380286
 "Est. Pop. Std. Dev.", +6.0553007081949835, +6.0553007081949835
 "Pearson's Skew", +0, +0
+
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, with header and extra line options check++++++++++
 
 ++++++++++ csvstats cols7rows4.csv +++Small valid 7 column file and no options check++++++++++
@@ -73,6 +74,7 @@
 "Sum", +22674
 "Sample Std. Dev.", +2.8670523120445481
 "Est. Pop. Std. Dev.", +2.8673390602887063
+
 ++++++++++ Shell got Return code number 0 for long file with single column (4.5348, 2.86733906028871)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Lew.dat +++Long file of 1 column of single digits, no options check++++++++++
@@ -82,6 +84,7 @@
 "Sum", -35487
 "Sample Std. Dev.", +276.63796878772814
 "Est. Pop. Std. Dev.", +277.33216804431618
+
 ++++++++++ Shell got Return code number 0 for 200 long file with single column (-177.435, 277.332168044316)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Lottery.dat +++Long file of 1 column of single digits, no options check++++++++++
@@ -91,6 +94,7 @@
 "Sum", +113133
 "Sample Std. Dev.", +291.02992239079242
 "Est. Pop. Std. Dev.", +291.69972747096904
+
 ++++++++++ Shell got Return code number 0 for 218 long file with single column (518.958715596330, 291.699727470969)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Mavro.dat +++Long file of 1 column of single digits, no options check++++++++++
@@ -100,6 +104,7 @@
 "Sum", +100.0928
 "Sample Std. Dev.", +0.0004248105460084853
 "Est. Pop. Std. Dev.", +0.00042912345400308546
+
 ++++++++++ Shell got Return code number 0 for 50 long file with single column (2.001856, 0.000429123454003053)++++++++++
 
 ++++++++++ csvstats -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column of single digits, no options check++++++++++
@@ -109,48 +114,109 @@
 "Sum", +29985.239999999991
 "Sample Std. Dev.", +0.078614502478867226
 "Est. Pop. Std. Dev.", +0.079010547819050619
+
 ++++++++++ Shell got Return code number 0 for 100 long file with single column (299.8524, 0.0790105478190518)++++++++++
 
-++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accurracy file of 3 large close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accuracy file of 3 large close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 3
 "Mean", +10000002
 "Sum", +30000006
 "Sample Std. Dev.", +0.81649658092772603
 "Est. Pop. Std. Dev.", +1
+
 ++++++++++ Shell got Return code number 0 for 1st NIST numerical accuracy file ( 10000002, 1)++++++++++
 
-++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accurracy file of close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accuracy file of close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +1.1999999999999889
 "Sum", +1201.1999999999889
 "Sample Std. Dev.", +0.099950037468776481
 "Est. Pop. Std. Dev.", +0.099999999999999159
+
 ++++++++++ Shell got Return code number 0 for 2nd NIST numerical accuracy file ( 1.2, 0.1)++++++++++
 
-++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accurracy file of close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accuracy file of close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +1000000.1999999994
 "Sum", +1001000200.1999993
 "Sample Std. Dev.", +0.099950037503684724
 "Est. Pop. Std. Dev.", +0.10000000003492485
+
 ++++++++++ Shell got Return code number 0 for 3rd NIST numerical accuracy file (1000000.2, 0.1)++++++++++
 
-++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accurracy file of large close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accuracy file of large close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +10000000.200000098
 "Sum", +10010000200.200098
 "Sample Std. Dev.", +0.099950038027291688
 "Est. Pop. Std. Dev.", +0.10000000055879354
+
 ++++++++++ Shell got Return code number 0 for 4th NIST numerical accuracy file (10000000.2, 0.1)++++++++++
 
-${TEN_PLUSS} cat data.csv | $EXE -v -o stdinTest.tst  +++stdin input with file output check${TEN_PLUSS}
+++++++++++ $EXE -H -c "!" -d ";" data.txt  +++ file with semi colon as the separator between colummns++++++++++
+"Stat. Type", "Column 1", "Column 2", "Column 3"
+"Count", 3, 3, 3
+"Most -ve", +1.0000000001e+50, +4.0000000003999999e+50, +7.0000000006999998e+50
+"Median", +2.0000000002e+50, +5.0000000004999999e+50, +8.0000000007999998e+50
+"Most +ve", +3.0000000002999999e+50, +6.0000000005999999e+50, +9.0000000009000006e+50
+"Range", +2.0000000002e+50, +2.0000000002e+50, +2.0000000002000008e+50
+"Mean", +2.0000000002e+50, +5.0000000004999999e+50, +8.0000000007999998e+50
+"Sum", +6.0000000005999999e+50, +1.50000000015e+51, +2.4000000002399999e+51
+"Sample Std. Dev.", +8.1649658100937572e+49, +8.1649658100937572e+49, +8.1649658100937593e+49
+"Est. Pop. Std. Dev.", +1.0000000001e+50, +1.0000000001e+50, +1.0000000001000004e+50
+"Pearson's Skew", +0, +0, +0
+++++++++++ Shell got Return code number 0 for semi colon column separator file++++++++++
+
+++++++++++ $EXE -H -d "\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns++++++++++
+"Stat. Type", "Column 1", "Column 2", "Column 3"
+"Count", 3, 3, 3
+"Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
+"Median", +2.0000000000000002e+50, +5e+50, +8.0000000000000006e+50
+"Most +ve", +2.9999999999999998e+50, +5.9999999999999996e+50, +9.0000000000000003e+50
+"Range", +1.9999999999999997e+50, +1.9999999999999993e+50, +2.0000000000000002e+50
+"Mean", +1.9999999999999997e+50, +5e+50, +7.9999999999999989e+50
+"Sum", +5.9999999999999996e+50, +1.5e+51, +2.3999999999999999e+51
+"Sample Std. Dev.", +8.1649658092772592e+49, +8.1649658092772571e+49, +8.1649658092772613e+49
+"Est. Pop. Std. Dev.", +9.9999999999999987e+49, +9.9999999999999966e+49, +1.0000000000000001e+50
+"Pearson's Skew", -1.2461512460483588e-15, +0, -4.9846049841934344e-15
+++++++++++ Shell got Return code number 0 for tab column separator file++++++++++
+
+++++++++++ $EXE -H -d "\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator++++++++++
+"Stat. Type", "Column 1", "Column 2", "Column 3"
+"Count", 3, 3, 3
+"Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
+"Median", +2.0000000000000002e+50, +5e+50, +8.0000000000000006e+50
+"Most +ve", +2.9999999999999998e+50, +5.9999999999999996e+50, +9.0000000000000003e+50
+"Range", +1.9999999999999997e+50, +1.9999999999999993e+50, +2.0000000000000002e+50
+"Mean", +1.9999999999999997e+50, +5e+50, +7.9999999999999989e+50
+"Sum", +5.9999999999999996e+50, +1.5e+51, +2.3999999999999999e+51
+"Sample Std. Dev.", +8.1649658092772592e+49, +8.1649658092772571e+49, +8.1649658092772613e+49
+"Est. Pop. Std. Dev.", +9.9999999999999987e+49, +9.9999999999999966e+49, +1.0000000000000001e+50
+"Pearson's Skew", -1.2461512460483588e-15, +0, -4.9846049841934344e-15
+++++++++++ Shell got Return code number 0 for tab column separator file++++++++++
+
+++++++++++ $EXE -H -d " " data.dat  +++ file with just ASCII space as the separator between colummns++++++++++
+"Stat. Type", "Column 1", "Column 2", "Column 3"
+"Count", 3, 3, 3
+"Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
+"Median", +2.0000000000000002e+50, +5e+50, +8.0000000000000006e+50
+"Most +ve", +2.9999999999999998e+50, +5.9999999999999996e+50, +9.0000000000000003e+50
+"Range", +1.9999999999999997e+50, +1.9999999999999993e+50, +2.0000000000000002e+50
+"Mean", +1.9999999999999997e+50, +5e+50, +7.9999999999999989e+50
+"Sum", +5.9999999999999996e+50, +1.5e+51, +2.3999999999999999e+51
+"Sample Std. Dev.", +8.1649658092772592e+49, +8.1649658092772571e+49, +8.1649658092772613e+49
+"Est. Pop. Std. Dev.", +9.9999999999999987e+49, +9.9999999999999966e+49, +1.0000000000000001e+50
+"Pearson's Skew", -1.2461512460483588e-15, +0, -4.9846049841934344e-15
+++++++++++ Shell got Return code number 0 for space column separator file++++++++++
+
+++++++++++ cat data.csv | $EXE -v -o stdinTest.tst  +++stdin input with file output check++++++++++
 Info: Processed 9 data items from stdin
 ++++++++++ Shell got Return code number 0 for input through stdin and output to a File++++++++++
-${TEN_PLUSS} cat stdinTest.tst  +++show output file check${TEN_PLUSS}
+++++++++++ cat stdinTest.tst  +++show output file check++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
