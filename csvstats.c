@@ -1,13 +1,17 @@
 /*
  * C S V S T A T S . C
  *
- * Last Modified on Fri Jun 20 21:54:07 2025
+ * Last Modified on Thu Jun 26 22:33:59 2025
  *
  * Read comma separated values from stdin or files
  * and calculate basic statistics like arithmetic
  * mean, median and standard deviation on the
  * values.
- * 
+ *
+ *
+ * 0v6 Added ability to skip lines at the start of data streams
+ * 0v5 Added ability to use alternate column separator to comma
+ *
  */
 
 
@@ -25,7 +29,7 @@
 #define TRUE (!(FALSE))
 #endif
 
-#define  NAME_VERSION  "csvstats 0v5 (2025-06-23)"
+#define  NAME_VERSION  "csvstats 0v6 (2025-06-26)"
 
 char *  exePath = NULL;
 char *  exeName = NULL;

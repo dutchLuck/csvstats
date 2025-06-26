@@ -29,13 +29,14 @@ The csvstats program running on Apple silicon produces the following CSV output;
 %
 ```
 
-Data files with columns of numbers separated by a character other than commas can be accomodated with the  -d  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option.
+Data files with columns of numbers separated by a character other than commas can be accomodated with the  -d  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option. If the character for -d or -c is non-printable, like tab, then it can be specified as an escaped character or as octal. For example a file with tab separated columns can be processed using -d "\t" or -d "\011".
 
 The usage information is; -
 ```
-% ./csvstats -h
+% ./csvstats -Vh
+csvstats 0v6 (2025-06-26)
 Usage:
- csvstats [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-v][-V] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
  -c CHR .. use CHR, not hash as the comment delimiter
  -D ...... enable debug output mode
@@ -51,6 +52,7 @@ Usage:
  -R ...... disable Range (i.e. most Pos - most Neg) value output
  -r ...... enable output in Row format
  -S ...... disable Standard Deviation value output
+ -s INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000
  -v ...... enable more verbose information output
  -V ...... enable version information output
  [FILE_1 .. [FILE_N]] Optional Name(s) of File(s) to process

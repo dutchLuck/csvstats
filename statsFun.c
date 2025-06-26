@@ -1,10 +1,11 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Mon Jun 23 11:04:19 2025, by O.F.H.
+ * last modified on Thu Jun 26 22:34:11 2025, by O.F.H.
  *
  * written by O.Holland
  *
+ * Added ability to skip lines at the start of data streams
  * Added ability to use alternate column separator to comma
  * Fixed compile error when -DDEBUG is used
  * 
@@ -501,6 +502,8 @@ size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
         fprintf( stderr, "Error: unable to allocate memory to store %ld csv numbers: Aborting\n", storageSize );
     }
     else  {
+		for ( i = cfg->s.optionInt; ( i-- > 0 && ( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )); )		/* skip lines if required */
+			if ( cfg->D.active )  printf( "Debug: Skipping line - \"%s\"", bfr );		/* print skip lines if required */
 		while( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )  {
 			if (( *bfr == '\0' ) || ( *bfr == cfg->c.optionChr ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {   /* skip comments or blank lines */
 				if ( cfg->D.active )  printf( "Debug: Warning: skipping a line (blank or comment) - %s", ( *bfr == '#' ) ? bfr : "\n" );

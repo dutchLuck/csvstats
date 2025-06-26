@@ -109,6 +109,15 @@
 		"long": "stddev",
 		"help": "...... disable Standard Deviation value output"
 	},
+	"skip": {
+		"type": "optInt",
+		"default": 0,
+		"short": "s",
+		"long": "skip",
+		"most_pos_limit": 1000,
+		"most_neg_limit": 0,
+		"help": "INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000"
+	},
 	"verbose": {
 		"type": "optFlg",
 		"default": "false",

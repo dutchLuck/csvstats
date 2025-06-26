@@ -7,7 +7,7 @@
  */
 
 #include <stdio.h>    /* printf() */
-#include <stdlib.h>   /* floating point double */
+#include <stdlib.h>   /* floating point double, strtol */
 #include <unistd.h>   /* getopt() */
 #include <ctype.h>    /* isprint()*/
 #include <limits.h>   /* INT_MIN INT_MAX LONG_MIN LONG_MAX */
@@ -49,13 +49,20 @@ int  configureDoubleOption( struct optDbl *  dblStructPtr, char *  dblString ) {
 
 int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
   size_t  len;
+  char *  end;
 
   len = strlen( chrString );
   chrStructPtr->active = TRUE;
   chrStructPtr->optionChr = ( int ) *chrString;
   if (( *chrString == '\\' ) && ( len > ( size_t ) 1 ) && ( chrString[ 1 ] != '\\'))  {
     switch ( chrString[ 1 ] )  {
-      case '0' : chrStructPtr->optionChr = '\0'; break;   /* NULL */
+      case '0' : {    /* Could be NULL string ('\0') or maybe octal (e.g. \009) */
+        chrStructPtr->optionChr = ( int ) strtol( chrString + 1, &end, 0 );
+        if ( *end != '\0' )  {    /* expect end to point to end of string if octal was ok */
+          chrStructPtr->optionChr = '\0';
+        }
+        break;   /* NULL */
+      }
       case 'a' : chrStructPtr->optionChr = '\a'; break;   /* audible bell */
       case 'b' : chrStructPtr->optionChr = '\b'; break;   /* backspace */
       case 'f' : chrStructPtr->optionChr = '\f'; break;   /* form-feed */
@@ -82,7 +89,7 @@ int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
 // Functions for Command Line Options Configuration from JSON Data
 void  usage( struct config *  opt, char *  exeName )  {
   printf( "Usage:\n");
-  printf( " %s [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-v][-V] [FILE_1 .. [FILE_N]]\n", exeName );
+  printf( " %s [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]\n", exeName );
   printf( " %s %s\n", opt->A.optID, opt->A.helpStr ); /* average */
   printf( " %s %s\n", opt->c.optID, opt->c.helpStr ); /* comment */
   printf( " %s %s\n", opt->D.optID, opt->D.helpStr ); /* debug */
@@ -98,6 +105,7 @@ void  usage( struct config *  opt, char *  exeName )  {
   printf( " %s %s\n", opt->R.optID, opt->R.helpStr ); /* range */
   printf( " %s %s\n", opt->r.optID, opt->r.helpStr ); /* row */
   printf( " %s %s\n", opt->S.optID, opt->S.helpStr ); /* stddev */
+  printf( " %s %s\n", opt->s.optID, opt->s.helpStr ); /* skip */
   printf( " %s %s\n", opt->v.optID, opt->v.helpStr ); /* verbose */
   printf( " %s %s\n", opt->V.optID, opt->V.helpStr ); /* version */
   printf( " %s %s\n", "[FILE_1 .. [FILE_N]]", "Optional Name(s) of File(s) to process" ); /* posParam1 */
@@ -170,6 +178,14 @@ void  initConfiguration ( struct config *  opt )  {
   opt->S.active = FALSE;
   opt->S.optID = "-S";
   opt->S.helpStr = "...... disable Standard Deviation value output";
+// skip: optInt
+  opt->s.active = FALSE;
+  opt->s.optID = "-s";
+  opt->s.helpStr = "INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000";
+  opt->s.mostPosLimit = 1000;
+  opt->s.mostNegLimit = 0;
+  opt->s.optionInt = 0;
+  opt->s.defaultVal = 0;
 // verbose: optFlg
   opt->v.active = FALSE;
   opt->v.optID = "-v";
@@ -201,15 +217,17 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
       case 'R': opt->R.active = TRUE; break; /* range */
       case 'r': opt->r.active = TRUE; break; /* row */
       case 'S': opt->S.active = TRUE; break; /* stddev */
+      case 's': configureIntegerOption( &opt->s, optarg ); break; /* skip */
       case 'v': opt->v.active = TRUE; break; /* verbose */
       case 'V': opt->V.active = TRUE; break; /* version */
       case '?' : {
-        if ( strchr( "cdo", optopt ) != NULL ) {
+        if ( strchr( "cdos", optopt ) != NULL ) {
           fprintf (stderr, "Error: Option -%c requires an argument.\n", optopt);
           switch ( optopt ) {
             case 'c': opt->c.active = FALSE; break;
             case 'd': opt->d.active = FALSE; break;
             case 'o': opt->o.active = FALSE; break;
+            case 's': opt->s.active = FALSE; break;
           }
         }
         else if (isprint (optopt))
@@ -242,6 +260,8 @@ void  configuration_status( struct config *  opt )  {
   printf( "Debug: option -R is %sctive (-R %s)\n", (opt->R.active) ? "a" : "ina", opt->R.helpStr); /* range */
   printf( "Debug: option -r is %sctive (-r %s)\n", (opt->r.active) ? "a" : "ina", opt->r.helpStr); /* row */
   printf( "Debug: option -S is %sctive (-S %s)\n", (opt->S.active) ? "a" : "ina", opt->S.helpStr); /* stddev */
+  printf( "Debug: option -s is %sctive (-s %s)\n", (opt->s.active) ? "a" : "ina", opt->s.helpStr); /* skip */
+  printf( "Debug: option -s value is %d, limits: %d .. %d\n", opt->s.optionInt, opt->s.mostNegLimit, opt->s.mostPosLimit); /* skip */
   printf( "Debug: option -v is %sctive (-v %s)\n", (opt->v.active) ? "a" : "ina", opt->v.helpStr); /* verbose */
   printf( "Debug: option -V is %sctive (-V %s)\n", (opt->V.active) ? "a" : "ina", opt->V.helpStr); /* version */
   printf( "Debug: %s (%s)\n", opt->posParam1.paramNameStr, opt->posParam1.helpStr);

@@ -7,7 +7,7 @@
  */
 
 #include <stdio.h>    /* printf() */
-#include <stdlib.h>   /* floating point double */
+#include <stdlib.h>   /* floating point double, strtol */
 #include <unistd.h>   /* getopt() */
 #include <ctype.h>    /* isprint()*/
 #include <limits.h>   /* INT_MIN INT_MAX LONG_MIN LONG_MAX */
@@ -49,13 +49,20 @@ int  configureDoubleOption( struct optDbl *  dblStructPtr, char *  dblString ) {
 
 int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
   size_t  len;
+  char *  end;
 
   len = strlen( chrString );
   chrStructPtr->active = TRUE;
   chrStructPtr->optionChr = ( int ) *chrString;
   if (( *chrString == '\\' ) && ( len > ( size_t ) 1 ) && ( chrString[ 1 ] != '\\'))  {
     switch ( chrString[ 1 ] )  {
-      case '0' : chrStructPtr->optionChr = '\0'; break;   /* NULL */
+      case '0' : {    /* Could be NULL string ('\0') or maybe octal (e.g. \009) */
+        chrStructPtr->optionChr = ( int ) strtol( chrString + 1, &end, 0 );
+        if ( *end != '\0' )  {    /* expect end to point to end of string if octal was ok */
+          chrStructPtr->optionChr = '\0';
+        }
+        break;   /* NULL */
+      }
       case 'a' : chrStructPtr->optionChr = '\a'; break;   /* audible bell */
       case 'b' : chrStructPtr->optionChr = '\b'; break;   /* backspace */
       case 'f' : chrStructPtr->optionChr = '\f'; break;   /* form-feed */

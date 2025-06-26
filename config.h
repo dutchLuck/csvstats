@@ -90,12 +90,13 @@ struct config {
   struct optFlg R;  /* (range) ...... disable Range (i.e. most Pos - most Neg) value output */
   struct optFlg r;  /* (row) ...... enable output in Row format */
   struct optFlg S;  /* (stddev) ...... disable Standard Deviation value output */
+  struct optInt s;  /* (skip) INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000 */
   struct optFlg v;  /* (verbose) ...... enable more verbose information output */
   struct optFlg V;  /* (version) ...... enable version information output */
 };
 
 // getopt() option string
-#define OPTIONS ":Ac:Dd:HhMNno:PpRrSvV"
+#define OPTIONS ":Ac:Dd:HhMNno:PpRrSs:vV"
 
 void  usage ( struct config *  optStructPtr, char *  exeName );
 void  initConfiguration ( struct config *  optStructPtr );
