@@ -1,7 +1,7 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Thu Jun 26 22:34:11 2025, by O.F.H.
+ * last modified on Sat Jun 28 22:18:56 2025, by O.F.H.
  *
  * written by O.Holland
  *
@@ -36,7 +36,7 @@
 #define  REAL_NUM_TYPE_STR  "long double"
 #define  SIZEOF_REAL_NUM  __SIZEOF_LONG_DOUBLE__
 #define  RD_IN_FMT  "%Lg"
-#define  WRT_OUT_FMT  "%+.*Lg"
+#define  WRT_OUT_FMT  "%+.*Le"
 #define  WRT_OUT_DIG  __LDBL_DECIMAL_DIG__
 #define  FABS  fabsl
 #define  SQRT  sqrtl
@@ -46,7 +46,7 @@
 #define  REAL_NUM_TYPE_STR  "double"
 #define  SIZEOF_REAL_NUM  __SIZEOF_DOUBLE__
 #define  RD_IN_FMT  "%lg"
-#define  WRT_OUT_FMT  "%+.*lg"
+#define  WRT_OUT_FMT  "%+.*le"
 #define  WRT_OUT_DIG  __DBL_DECIMAL_DIG__
 #define  FABS  fabs
 #define  SQRT  sqrt
@@ -163,30 +163,37 @@ void  printULongAndSeparator( FILE *  ofp, unsigned long  number, char *  separa
 
 /*----------------------------------*/
   
-void  printNumberAndSeparator( FILE *  ofp, REAL_NUM_PREC  number, char *  separator )  {
-	fprintf( ofp, WRT_OUT_FMT, WRT_OUT_DIG, number );   /* use precision specified by macro in float.h */
+void  printNumberAndSeparator( struct config *  cfg, FILE *  ofp, REAL_NUM_PREC  number, char *  separator )  {
+	int  output_decimal_places = cfg->d.defaultVal;
+
+	/* use precision specified by macro in float.h if most_pos_limit was specified */
+	if ( cfg->d.active )  {
+		if ( cfg->d.optionInt == cfg->d.mostPosLimit ) output_decimal_places = WRT_OUT_DIG;
+		else  output_decimal_places = cfg->d.optionInt;
+	}
+	fprintf( ofp, WRT_OUT_FMT, output_decimal_places, number );   /* use precision specified by macro in float.h */
 	if (( separator != NULL ) || ( *separator != '\0' ))  fprintf( ofp, "%s", separator );
 }
 
 
 /*----------------------------------*/
 
-void  printDebugStats( FILE *  ofp, int colnum, REAL_NUM_PREC  ave, REAL_NUM_PREC  adev, REAL_NUM_PREC  sdev, REAL_NUM_PREC  var,
+void  printDebugStats( struct config *  cfg, FILE *  ofp, int colnum, REAL_NUM_PREC  ave, REAL_NUM_PREC  adev, REAL_NUM_PREC  sdev, REAL_NUM_PREC  var,
 	REAL_NUM_PREC  skew, REAL_NUM_PREC  curt )  {
   
 	fprintf( ofp, "Debug: Col %d, ", colnum );
 	fprintf( ofp, "Av. " );
-	printNumberAndSeparator( ofp, ave, ", " );
+	printNumberAndSeparator( cfg, ofp, ave, ", " );
 	fprintf( ofp, "ADev. " );
-	printNumberAndSeparator( ofp, adev, ", " );
+	printNumberAndSeparator( cfg, ofp, adev, ", " );
 	fprintf( ofp, "SDev. " );
-	printNumberAndSeparator( ofp, sdev, ", " );
+	printNumberAndSeparator( cfg, ofp, sdev, ", " );
 	fprintf( ofp, "Var. " );
-	printNumberAndSeparator( ofp, var, ", " );
+	printNumberAndSeparator( cfg, ofp, var, ", " );
 	fprintf( ofp, "Skew " );
-	printNumberAndSeparator( ofp, skew, ", " );
+	printNumberAndSeparator( cfg, ofp, skew, ", " );
 	fprintf( ofp, "Kurt. " );
-	printNumberAndSeparator( ofp, curt, ", " );
+	printNumberAndSeparator( cfg, ofp, curt, ", " );
 	fprintf( ofp, "\n" );
 }
 
@@ -311,7 +318,7 @@ int  calcMedians( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  num
 				printf( "\nUnsorted column %d ( %lu values)\n", i, numOfColValues[ i ]);
 				for( j = 0; j < numOfColValues[ i ]; j++ )  {
 					printf( "%lu: ", j );
-					printNumberAndSeparator( ofp, colStorage[ j ], "\n");
+					printNumberAndSeparator( cfg, ofp, colStorage[ j ], "\n");
 				}
 			}
 #endif
@@ -321,7 +328,7 @@ int  calcMedians( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  num
 				printf( "Debug: calc medians: Sorted column %d ( %lu values)\n", i, numOfColValues[ i ]);
 				for( j = 0; j < numOfColValues[ i ]; j++ )  {
 					printf( "Debug: %lu: ", j );
-					printNumberAndSeparator( ofp, colStorage[ j ], "\n");
+					printNumberAndSeparator( cfg, ofp, colStorage[ j ], "\n");
 				}
 			}
 			/* find the median value */
@@ -346,22 +353,22 @@ void  printColumnsStatsInRows( struct config *  cfg, FILE *  ofp, int  numOfColu
 	/* all columns Stats except the most righthand one need the separator */
 	for( i = 0; i < numOfColumns; i++ )  {
 	  printf( "%d, %lu, ", i + 1, numOfValues[ i ] );  /* column number, count, assume at least one column stat to print */
-	  printNumberAndSeparator( ofp, columnsSums[ i ], ( !cfg->A.active || !cfg->M.active || !cfg->P.active ||
+	  printNumberAndSeparator( cfg, ofp, columnsSums[ i ], ( !cfg->A.active || !cfg->M.active || !cfg->P.active ||
 		!cfg->N.active || !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->M.active )
-		printNumberAndSeparator( ofp, columnsMedians[ i ], ( !cfg->A.active || !cfg->P.active ||
+		printNumberAndSeparator( cfg, ofp, columnsMedians[ i ], ( !cfg->A.active || !cfg->P.active ||
 			!cfg->N.active || !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->A.active )
-		printNumberAndSeparator( ofp, columnsMeans[ i ], ( !cfg->P.active ||
+		printNumberAndSeparator( cfg, ofp, columnsMeans[ i ], ( !cfg->P.active ||
 			!cfg->N.active || !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->P.active )
-		printNumberAndSeparator( ofp, columnsMostPos[ i ], ( !cfg->N.active || !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
+		printNumberAndSeparator( cfg, ofp, columnsMostPos[ i ], ( !cfg->N.active || !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->N.active )
-		printNumberAndSeparator( ofp, columnsMostNeg[ i ], ( !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
+		printNumberAndSeparator( cfg, ofp, columnsMostNeg[ i ], ( !cfg->R.active || !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->R.active )
-		printNumberAndSeparator( ofp, columnsMostPos[ i ] - columnsMostNeg[i], ( !cfg->S.active ) ? separatorStr : "" );
+		printNumberAndSeparator( cfg, ofp, columnsMostPos[ i ] - columnsMostNeg[i], ( !cfg->S.active ) ? separatorStr : "" );
 	  if( !cfg->S.active )  {
-		printNumberAndSeparator( ofp, columnsEstPopStdDev[ i ], "" );
+		printNumberAndSeparator( cfg, ofp, columnsEstPopStdDev[ i ], "" );
 	  }
 	  /* if oneRowFlag is active then continue using separator until the last column stats are printed */
 	  if ( oneRowFlag && (( i + 1 ) < numOfColumns ))  printf( "%s", separatorStr );
@@ -406,45 +413,45 @@ void  printColumnsStatsInColumns( struct config *  cfg, FILE *  ofp, int  numOfC
 	if( !cfg->N.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Most -ve\", " );
 	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( ofp, columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if( !cfg->M.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Median\", " );
 	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( ofp, columnsMedians[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsMedians[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if( !cfg->P.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Most +ve\", " );
 	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( ofp, columnsMostPos[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsMostPos[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if( !cfg->R.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Range\", " );
 	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( ofp, columnsMostPos[i] - columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsMostPos[i] - columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if( !cfg->A.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Mean\", " );
 	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( ofp, columnsMeans[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsMeans[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Sum\", " );
 	for( i = 0; i < numOfColumns; i++ )
-	  printNumberAndSeparator( ofp, columnsSums[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+	  printNumberAndSeparator( cfg, ofp, columnsSums[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	if( !cfg->S.active )  {
 		if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Sample Std. Dev.\", " );
 		for( i = 0; i < numOfColumns; i++ )  {
-			printNumberAndSeparator( ofp, columnsSampleStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+			printNumberAndSeparator( cfg, ofp, columnsSampleStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 		}
 		if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Est. Pop. Std. Dev.\", " );
 		for( i = 0; i < numOfColumns; i++ )  {
-			printNumberAndSeparator( ofp, columnsEstPopStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+			printNumberAndSeparator( cfg, ofp, columnsEstPopStdDev[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 		}
 	}
 	if( !cfg->p.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Pearson's Skew\", " );
 	  for( i = 0; i < numOfColumns; i++ )  {
-		printNumberAndSeparator( ofp, columnsPearsonSkew[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+		printNumberAndSeparator( cfg, ofp, columnsPearsonSkew[ i ], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	  }
 	}
 }
@@ -512,13 +519,13 @@ size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
 				lineNumber += 1;
 				if( lineNumber == (size_t) 1 )  {
 					if ( cfg->D.active )  printf( "Debug: Line Number: %lu, Line String: \"%s\"", lineNumber, bfr );
-					*numOfColumns = processFirstLineOfNumbers( bfr, cfg->d.optionChr );
+					*numOfColumns = processFirstLineOfNumbers( bfr, cfg->C.optionChr );
 					totalNumbers = (size_t) *numOfColumns;
 					if( cfg->D.active )
 						printf( "Debug: %d Column(s) found in the first line of numbers.\n", *numOfColumns );
 				}
 				else  {
-					if(( i = processLine( bfr, cfg->d.optionChr, totalNumbers )) != *numOfColumns )  {
+					if(( i = processLine( bfr, cfg->C.optionChr, totalNumbers )) != *numOfColumns )  {
 						if ( cfg->v.active )
 							printf( "Warning: %d values in line %ld doesn't match the expected %d values found in the first line\n",
 								i, lineNumber, *numOfColumns );

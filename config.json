@@ -11,11 +11,18 @@
 		"long": "average",
 		"help": "...... disable Arithmetic Mean (i.e. average ) output."
 	},
-	"comment": {
+	"column_separator": {
+		"type": "optChr",
+		"default": ",",
+		"short": "C",
+		"long": "column_separator",
+		"help": "CHR .. use CHR, not comma as the column separator"
+	},
+	"comment_delimiter": {
 		"type": "optChr",
 		"default": "#",
 		"short": "c",
-		"long": "comment",
+		"long": "comment_delimiter",
 		"help": "CHR .. use CHR, not hash as the comment delimiter"
 	},
 	"debug": {
@@ -25,12 +32,14 @@
 		"long": "debug",
 		"help": "...... enable debug output mode"
 	},
-	"delimiter": {
-		"type": "optChr",
-		"default": ",",
+	"decimal_places": {
+		"type": "optInt",
+		"default": 16,
 		"short": "d",
-		"long": "delimiter",
-		"help": "CHR .. use CHR, not comma as the column separator"
+		"long": "decimal_places",
+		"most_pos_limit": 30,
+		"most_neg_limit": 0,
+		"help": "INT .. provide INT decimal places on output stats - where 0 <= INT <= 30"
 	},
 	"header": {
 		"type": "optFlg",

@@ -76,9 +76,10 @@ struct optDbl {
 struct config {
   struct positionParam posParam1;  /* (posParam1) Optional Name(s) of File(s) to process */
   struct optFlg A;  /* (average) ...... disable Arithmetic Mean (i.e. average ) output. */
-  struct optChr c;  /* (comment) CHR .. use CHR, not hash as the comment delimiter */
+  struct optChr C;  /* (column_separator) CHR .. use CHR, not comma as the column separator */
+  struct optChr c;  /* (comment_delimiter) CHR .. use CHR, not hash as the comment delimiter */
   struct optFlg D;  /* (debug) ...... enable debug output mode */
-  struct optChr d;  /* (delimiter) CHR .. use CHR, not comma as the column separator */
+  struct optInt d;  /* (decimal_places) INT .. provide INT decimal places on output stats - where 0 <= INT <= 30 */
   struct optFlg H;  /* (header) ...... enable Header output mode */
   struct optFlg h;  /* (help) ...... this help / usage information */
   struct optFlg M;  /* (median) ...... disable Median value output */
@@ -96,7 +97,7 @@ struct config {
 };
 
 // getopt() option string
-#define OPTIONS ":Ac:Dd:HhMNno:PpRrSs:vV"
+#define OPTIONS ":AC:c:Dd:HhMNno:PpRrSs:vV"
 
 void  usage ( struct config *  optStructPtr, char *  exeName );
 void  initConfiguration ( struct config *  optStructPtr );

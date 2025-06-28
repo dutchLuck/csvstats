@@ -18,14 +18,14 @@ The csvstats program running on Apple silicon produces the following CSV output;
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
-"Median", +2.0000000000000002e+50, +5e+50, +8.0000000000000006e+50
+"Median", +2.0000000000000002e+50, +5.0000000000000000e+50, +8.0000000000000006e+50
 "Most +ve", +2.9999999999999998e+50, +5.9999999999999996e+50, +9.0000000000000003e+50
 "Range", +1.9999999999999997e+50, +1.9999999999999993e+50, +2.0000000000000002e+50
-"Mean", +1.9999999999999997e+50, +5e+50, +7.9999999999999989e+50
-"Sum", +5.9999999999999996e+50, +1.5e+51, +2.3999999999999999e+51
+"Mean", +1.9999999999999997e+50, +5.0000000000000000e+50, +7.9999999999999989e+50
+"Sum", +5.9999999999999996e+50, +1.5000000000000000e+51, +2.3999999999999999e+51
 "Sample Std. Dev.", +8.1649658092772592e+49, +8.1649658092772571e+49, +8.1649658092772613e+49
 "Est. Pop. Std. Dev.", +9.9999999999999987e+49, +9.9999999999999966e+49, +1.0000000000000001e+50
-"Pearson's Skew", -1.2461512460483588e-15, +0, -4.9846049841934344e-15
+"Pearson's Skew", -1.2461512460483588e-15, +0.0000000000000000e+00, -4.9846049841934344e-15
 %
 ```
 
@@ -33,14 +33,14 @@ Data files with columns of numbers separated by a character other than commas ca
 
 The usage information is; -
 ```
-% ./csvstats -Vh
-csvstats 0v6 (2025-06-26)
+% ./csvstats -h
 Usage:
- csvstats [-A][-c CHR][-D][-d CHR][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
+ -C CHR .. use CHR, not comma as the column separator
  -c CHR .. use CHR, not hash as the comment delimiter
  -D ...... enable debug output mode
- -d CHR .. use CHR, not comma as the column separator
+ -d INT .. provide INT decimal places on output stats - where 0 <= INT <= 30
  -H ...... enable Header output mode
  -h ...... this help / usage information
  -M ...... disable Median value output

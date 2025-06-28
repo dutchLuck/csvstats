@@ -87,29 +87,34 @@ echo "${TEN_PLUSS} $EXE -Hnp -s 60 NumAcc4.dat  +++Skip first 60 lines in uncomm
 echo "${TEN_PLUSS} Shell got Return code number $? for 4th NIST numerical accuracy file (10000000.2, 0.1)${TEN_PLUSS}"
 #
 echo ""
-echo ${TEN_PLUSS} '$EXE -H -c "!" -d ";" data.txt  +++ file with semi colon as the separator between colummns'${TEN_PLUSS}
-../$EXE -H -c "!" -d ";" data.txt
+echo ${TEN_PLUSS} '$EXE -H -c "!" -C ";" data.txt  +++ file with semi colon as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -c "!" -C ";" data.txt
 echo "${TEN_PLUSS} Shell got Return code number $? for semi colon column separator file${TEN_PLUSS}"
 #
 echo ""
-echo ${TEN_PLUSS} '$EXE -H -d "\\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns'${TEN_PLUSS}
-../$EXE -H -d "\t" data.tab
+echo ${TEN_PLUSS} '$EXE -H -C "\\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -C "\t" data.tab
 echo "${TEN_PLUSS} Shell got Return code number $? for tab column separator file${TEN_PLUSS}"
 #
 echo ""
-echo ${TEN_PLUSS} '$EXE -H -d "\\011" data.tab  +++ file with ASCII horizontal tab (Octal value 011) as the column separator'${TEN_PLUSS}
-../$EXE -H -d "\011" data.tab
+echo ${TEN_PLUSS} '$EXE -H -C "\\011" data.tab  +++ file with ASCII horizontal tab (Octal value 011) as the column separator'${TEN_PLUSS}
+../$EXE -H -C "\011" data.tab
 echo "${TEN_PLUSS} Shell got Return code number $? for tab column separator file${TEN_PLUSS}"
 #
 echo ""
-echo ${TEN_PLUSS} '$EXE -H -d "\\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator'${TEN_PLUSS}
-../$EXE -H -d "\x9" data.tab
+echo ${TEN_PLUSS} '$EXE -H -C "\\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator'${TEN_PLUSS}
+../$EXE -H -C "\x9" data.tab
 echo "${TEN_PLUSS} Shell got Return code number $? for tab column separator file${TEN_PLUSS}"
 #
 echo ""
-echo ${TEN_PLUSS} '$EXE -H -d " " data.dat  +++ file with just ASCII space as the separator between colummns'${TEN_PLUSS}
-../$EXE -H -d " " data.dat
+echo ${TEN_PLUSS} '$EXE -H -C " " data.dat  +++ file with just ASCII space as the separator between colummns'${TEN_PLUSS}
+../$EXE -H -C " " data.dat
 echo "${TEN_PLUSS} Shell got Return code number $? for space column separator file${TEN_PLUSS}"
+#
+echo ""
+echo ${TEN_PLUSS} '$EXE -d 10 data.csv  +++ output each result to 10 decimal places'${TEN_PLUSS}
+../$EXE -d 10 data.csv
+echo "${TEN_PLUSS} Shell got Return code number $? for results to 10 decimal places${TEN_PLUSS}"
 #
 echo ""
 echo ${TEN_PLUSS} 'cat data.csv | $EXE -v -o stdinTest.tst  +++stdin input with file output check'${TEN_PLUSS}

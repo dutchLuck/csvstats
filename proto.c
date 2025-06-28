@@ -54,7 +54,13 @@ int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
   len = strlen( chrString );
   chrStructPtr->active = TRUE;
   chrStructPtr->optionChr = ( int ) *chrString;
-  if (( *chrString == '\\' ) && ( len > ( size_t ) 1 ) && ( chrString[ 1 ] != '\\'))  {
+  if ( strspn( chrString, "0123456789" ) > 0 )  {     /* could be decimal, hex as 0x.. or octal as 011 */
+    chrStructPtr->optionChr = ( int ) strtol( chrString, &end, 0 );
+    if ( *end != '\0' )  {    /* expect end to point to end of string if number was ok */
+      chrStructPtr->optionChr = '\0';
+    }
+  }
+  else if (( *chrString == '\\' ) && ( len > ( size_t ) 1 ) && ( chrString[ 1 ] != '\\'))  {
     switch ( chrString[ 1 ] )  {
       case '0' : {    /* Could be NULL string ('\0') or maybe octal (e.g. \009) */
         chrStructPtr->optionChr = ( int ) strtol( chrString + 1, &end, 0 );
