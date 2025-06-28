@@ -29,7 +29,8 @@ The csvstats program running on Apple silicon produces the following CSV output;
 %
 ```
 
-Data files with columns of numbers separated by a character other than commas can be accomodated with the  -d  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option. If the character for -d or -c is non-printable, like tab, then it can be specified as an escaped character or as octal. For example a file with tab separated columns can be processed using -d "\t" or -d "\011".
+Data files with columns of numbers separated by a character other than commas can be accomodated with the  -C  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option. If the character for -C or -c is non-printable, like tab, then it can be specified as an escaped character or as escaped octal. For example a file with tab separated columns can be processed using -C "\t" or -d "\011".
+It can also be in an unescaped number form such as decimal (-C 9), octal (-C 011) or hex (-C 0x9).
 
 The usage information is; -
 ```
