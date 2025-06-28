@@ -29,7 +29,7 @@ The csvstats program running on Apple silicon produces the following CSV output;
 %
 ```
 
-Data files with columns of numbers separated by a character other than commas can be accomodated with the  -C  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option. If the character for -C or -c is non-printable, like tab, then it can be specified as an escaped character or as escaped octal. For example a file with tab separated columns can be processed using -C "\t" or -d "\011".
+Data files with columns of numbers separated by a character other than commas can be accomodated with the  -C  command line option. Similarly files with comment lines that begin with a character other than hash can be accomodated with the  -c  command line option. If the character for -C or -c is non-printable, like tab, then it can be specified as an escaped character or as escaped octal. For example a file with tab separated columns can be processed using -C "\t" or -C "\011".
 It can also be in an unescaped number form such as decimal (-C 9), octal (-C 011) or hex (-C 0x9).
 
 The usage information is; -
@@ -59,3 +59,6 @@ Usage:
  [FILE_1 .. [FILE_N]] Optional Name(s) of File(s) to process
 %
 ```
+The statistical results are output in comma separated form. They may be in column or row layout as determined by the  -r  option. The default layout is columns of results that line up with the columns of data. If  -r  is used then results are output in rows.
+
+The output, or not, of specific statistical descriptor numbers can be controlled by various command line options. For example a report on the pearson skew value can be supressed by using the  -p  option. 
