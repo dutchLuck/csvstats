@@ -92,12 +92,12 @@ struct config {
   struct optFlg r;  /* (row) ...... enable output in Row format */
   struct optFlg S;  /* (stddev) ...... disable Standard Deviation value output */
   struct optInt s;  /* (skip) INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000 */
-  struct optFlg v;  /* (verbose) ...... enable more verbose information output */
   struct optFlg V;  /* (version) ...... enable version information output */
+  struct optFlg v;  /* (verbose) ...... enable more verbose information output */
 };
 
 // getopt() option string
-#define OPTIONS ":AC:c:Dd:HhMNno:PpRrSs:vV"
+#define OPTIONS ":AC:c:Dd:HhMNno:PpRrSs:Vv"
 
 void  usage ( struct config *  optStructPtr, char *  exeName );
 void  initConfiguration ( struct config *  optStructPtr );

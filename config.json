@@ -127,18 +127,18 @@
 		"most_neg_limit": 0,
 		"help": "INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000"
 	},
-	"verbose": {
-		"type": "optFlg",
-		"default": "false",
-		"short": "v",
-		"long": "verbose",
-		"help": "...... enable more verbose information output"
-	},
 	"version": {
 		"type": "optFlg",
 		"default": "false",
 		"short": "V",
 		"long": "version",
 		"help": "...... enable version information output"
+	},
+	"verbose": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "v",
+		"long": "verbose",
+		"help": "...... enable more verbose information output"
 	}
 }

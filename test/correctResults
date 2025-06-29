@@ -274,7 +274,7 @@ Info: Processed 9 data items from stdin
 ++++++++++ csvstats -vVh  +++Usage/help verbose and version information check++++++++++
 csvstats 0v7 (2025-06-28)
 Usage:
- csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
  -C CHR .. use CHR, not comma as the column separator
  -c CHR .. use CHR, not hash as the comment delimiter
@@ -292,7 +292,7 @@ Usage:
  -r ...... enable output in Row format
  -S ...... disable Standard Deviation value output
  -s INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000
- -v ...... enable more verbose information output
  -V ...... enable version information output
+ -v ...... enable more verbose information output
  [FILE_1 .. [FILE_N]] Optional Name(s) of File(s) to process
 ++++++++++ Shell got Return code number 0 for usage/help, version and verbose options++++++++++

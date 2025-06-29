@@ -78,6 +78,10 @@ echo "clean:" >> $OP_FILE_NAME
 echo -e "\trm -f $TRGT $NAME.o $NAME1.o $NAME2.o $NAME3.o" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
+echo "config_with_py27:" >> $OP_FILE_NAME
+echo -e "\tpython write_config_py27.py" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
 echo "ldouble: clean" >> $OP_FILE_NAME
 echo -e "\t$COMPILER $OPTIONS -UDEBUG -DLDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
