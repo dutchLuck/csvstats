@@ -1,10 +1,11 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Sat Jun 28 22:18:56 2025, by O.F.H.
+ * last modified on Sun Jun 29 20:25:12 2025, by O.F.H.
  *
  * written by O.Holland
  *
+ * Fixed compile error when -DDEBUG is used
  * Added ability to skip lines at the start of data streams
  * Added ability to use alternate column separator to comma
  * Fixed compile error when -DDEBUG is used
@@ -22,10 +23,10 @@
 #define  BFR_SIZE  15*MAX_NUM_OF_COLS
 #define  COMP_NUMBER  2520
 
-/* Set up default Floating Point Precision to double */
-#ifndef  LDBL_PREC
+/* Set up default Floating Point Precision to long double */
+#ifndef  DBL_PREC
 #ifndef  FLT_PREC
-#define  DBL_PREC 1
+#define  LDBL_PREC 1
 #endif
 #endif
 
@@ -231,7 +232,7 @@ int  calcStdDev( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  numO
 			}
 			if ( cfg->D.active )  {
 				ave = adev = sdev = var = skew = curt = ( REAL_NUM_PREC ) 0.0;
-				printDebugStats( ofp, i, ave, adev, sdev, var, skew, curt );
+				printDebugStats( cfg, ofp, i, ave, adev, sdev, var, skew, curt );
 			}
 #endif
 			ptr = colStorage;         /* point at start of temp column storage */
@@ -245,13 +246,13 @@ int  calcStdDev( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  numO
 #ifdef  DEBUG
 			if ( cfg->D.active )  {
 				ave = adev = sdev = var = skew = curt = ( REAL_NUM_PREC ) 0.0;
-				printDebugStats( ofp, i, ave, adev, sdev, var, skew, curt );
+				printDebugStats( cfg, ofp, i, ave, adev, sdev, var, skew, curt );
 			}
 			if ( cfg->D.active )  {
 				printf( "\nDebug: column %d centred values\n", i );
 				for( j = 0; j < numOfColValues[ i ]; j++ )  {
 					printf( "%ld: ", j );
-					printNumberAndSeparator( ofp, colStorage[ j ], "\n");
+					printNumberAndSeparator( cfg, ofp, colStorage[ j ], "\n");
 				}
 			}
 #endif

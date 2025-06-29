@@ -78,6 +78,18 @@ echo "clean:" >> $OP_FILE_NAME
 echo -e "\trm -f $TRGT $NAME.o $NAME1.o $NAME2.o $NAME3.o" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
 #
+echo "ldouble: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -UDEBUG -DLDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "double: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -UDEBUG -DDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
+echo "float: clean" >> $OP_FILE_NAME
+echo -e "\t$COMPILER $OPTIONS -UDEBUG -DFLT_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
+echo "" >> $OP_FILE_NAME
+#
 echo "debug: clean" >> $OP_FILE_NAME
 echo -e "\t$COMPILER $OPTIONS -DDEBUG -DDBL_PREC -o $TRGT $SRC $SRC1 $SRC2 $SRC3 $LNK_OPTIONS" >> $OP_FILE_NAME
 echo "" >> $OP_FILE_NAME
