@@ -1,5 +1,8 @@
 # csvstats
-Calculate the basic statistical descriptors for columns of numbers in a comma separated variable file. The stats are calculated using long double floating point precision and include sum, mean, median and standard deviation. The standard deviation is calculated from the semi-normalized column data, created by subtracting the mean from the data values to avoid numerical errors becoming large. The input file is assumed to have 1 or more columns of numbers, which do not have missing values, so that once the columns are counted in the first line of data, the rest of file is consistant with that count. Lines starting with a hash '#' are considered to be comment lines and are ignored, as are blank lines. For example the following data file is compatible with csvstats.
+The csvstats command line utility program calculates the basic statistical descriptors for one or more columns of numbers read in from one or more files or read in from standard input (stdin). By default the columns are expected to be multiple ASCII characters representing numbers separated from one another by a comma (,). In this broad sense the program calculates the statistics of data in Comma Separated Value (CSV) files. The program is much less strict in what it accepts as CSV format than the CSV definition provided in
+<a href="https://www.ietf.org/rfc/rfc4180.txt">RFC 4180</a>.
+
+The stats are calculated using long double floating point precision and include sum, mean, median and standard deviation. The standard deviation is calculated from the semi-normalized column data, created by subtracting the mean from the data values to avoid numerical errors becoming large. Input files are assumed to have 1 or more columns of numbers, which do not have missing values, so that once the columns are counted in the first line of data, the rest of file is consistant with that count. Lines starting with a hash '#' are considered to be comment lines and are ignored, as are blank lines. For example the following data file is compatible with csvstats.
 ```
 % cat test/data.csv
 # Test file for julia bfbs.jl
@@ -61,4 +64,25 @@ Usage:
 ```
 The statistical results are output in comma separated form. They may be in column or row layout as determined by the  -r  option. The default layout is columns of results that line up with the columns of data. If  -r  is used then results are output in rows.
 
-The output, or not, of specific statistical descriptor numbers can be controlled by various command line options. For example a report on the pearson skew value can be supressed by using the  -p  option. 
+The output, or not, of specific statistical descriptor numbers can be controlled by various command line options. For example a report on the pearson skew value can be supressed by using the  -p  option.
+
+This code is known to compile and run on both Apple Silicon computers and x86 64 bit Linux computers. Currently on Apple Silicon MacOS the long double floating point precision is the same precision as normal double precision. On Apple Intel based MacOS and x86 64 bit Linux the long double precision floating point is more precise than normal double precision.
+
+Some level of confidence that the program produces reasonable results even for data that is constructed to be demanding can be gained by looking at the output of the program for the test suite of data that may be obtained from the
+<a href="https://itl.nist.gov/div898/strd/">NIST Standard Reference Datasets website</a>.
+For example the NIST reference file named "NumAcc4.dat" has been constructed to have the following statistical characteristics; -
+```
+Sample Mean                                ybar:   10000000.2 (exact)
+Sample Standard Deviation (denom. = n-1)      s:   0.1        (exact)
+Sample Autocorrelation Coefficient (lag 1) r(1):   -0.999     (exact)
+```
+Results extracted from the output of command "./csvstats -s 60 test/NumAcc4.dat" on an Intel x86 64 bit Linux machine are; -
+```
+"Mean", +1.0000000200000000e+07
+"Est. Pop. Std. Dev.", +9.9999999999909050e-02
+```
+For comparison the results extracted from the output of command "./csvstats -s 60 test/NumAcc4.dat" on Apple Silicon are; -
+```
+"Mean", +1.0000000200000098e+07
+"Est. Pop. Std. Dev.", +1.0000000055879354e-01
+```
