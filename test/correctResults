@@ -1,5 +1,5 @@
 
-++++++++++ ../csvstats small.csv  +++Small valid 2 column file, no options check++++++++++
+++++++++++ csvstats small.csv  +++Small valid 2 column file, no options check++++++++++
 10, 10
 +0.0000000000000000e+00, +1.0000000000000000e+00
 +9.0000000000000000e+00, +1.0000000000000000e+01
@@ -12,7 +12,7 @@
 +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, no options check++++++++++
 
-++++++++++ ../csvstats -H small.csv  +++Small valid 2 column file, with header option check++++++++++
+++++++++++ csvstats -H small.csv  +++Small valid 2 column file, with header option check++++++++++
 "Stat. Type", "Column 1", "Column 2"
 "Count", 10, 10
 "Most -ve", +0.0000000000000000e+00, +1.0000000000000000e+00
@@ -26,7 +26,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, with header option check++++++++++
 
-++++++++++ ../csvstats -H -n small.csv  +++Small valid 2 column file, with header and extra line options check++++++++++
+++++++++++ csvstats -H -n small.csv  +++Small valid 2 column file, with header and extra line options check++++++++++
 "Stat. Type", "Column 1", "Column 2"
 "Count", 10, 10
 "Most -ve", +0.0000000000000000e+00, +1.0000000000000000e+00
@@ -41,7 +41,7 @@
 
 ++++++++++ Shell got Return code number 0 for small valid file small.csv, with header and extra line options check++++++++++
 
-++++++++++ ../csvstats cols7rows4.csv +++Small valid 7 column file and no options check++++++++++
+++++++++++ csvstats cols7rows4.csv +++Small valid 7 column file and no options check++++++++++
 4, 4, 4, 4, 4, 4, 4
 -8.0000000000000000e-01, -8.0000000000000000e-01, -8.0000000000000000e-01, -5.0000000000000000e-02, +4.0000000000000000e-02, +2.0000000000000000e-02, +1.0000000000000000e-02
 -7.2192170500000000e-01, -7.3082639500000000e-01, -7.4688890500000000e-01, -4.5898940000000000e-02, +4.2235100000000000e-02, +2.6039480000000000e-02, +1.0705635000000000e-02
@@ -54,7 +54,7 @@
 -9.5883461092138470e-01, -6.7993045295095339e-01, -1.1419845113243299e-01, +3.2765450544844907e-01, +9.4613199409264147e-01, -3.7786822621300519e-01, +1.3486239156277292e+00
 ++++++++++ Shell got Return code number 0 for small valid file tmp.csv, no options check++++++++++
 
-++++++++++ ../csvstats heights.csv +++Somewhat longer file with 2 columns, 1 column the reverse of the other++++++++++
+++++++++++ csvstats heights.csv +++Somewhat longer file with 2 columns, 1 column the reverse of the other++++++++++
 2113, 2113
 +5.6000000000000000e+01, +5.6000000000000000e+01
 +7.0000000000000000e+01, +7.0000000000000000e+01
@@ -67,7 +67,7 @@
 -6.0768243973745309e-01, -6.0768243973745310e-01
 ++++++++++ Shell got Return code number 0 for small file with lengthier lines++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_PiDigits.dat +++Long file of 1 column of single digits, no options check++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_PiDigits.dat +++Long file of 1 column of single digits, no options check++++++++++
 "Stat. Type", "Column 1"
 "Count", 5000
 "Mean", +4.5348000000000000e+00
@@ -77,7 +77,7 @@
 
 ++++++++++ Shell got Return code number 0 for long file with single column (4.5348, 2.86733906028871)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_Lew.dat +++Long file of 1 column of single digits, no options check++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_Lew.dat +++Long file of 1 column of single digits, no options check++++++++++
 "Stat. Type", "Column 1"
 "Count", 200
 "Mean", -1.7743500000000000e+02
@@ -87,7 +87,7 @@
 
 ++++++++++ Shell got Return code number 0 for 200 long file with single column (-177.435, 277.332168044316)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_Lottery.dat +++Long file of 1 column of single digits, no options check++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_Lottery.dat +++Long file of 1 column of single digits, no options check++++++++++
 "Stat. Type", "Column 1"
 "Count", 218
 "Mean", +5.1895871559633028e+02
@@ -97,7 +97,7 @@
 
 ++++++++++ Shell got Return code number 0 for 218 long file with single column (518.958715596330, 291.699727470969)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_Mavro.dat +++Long file of 1 column of single digits, no options check++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_Mavro.dat +++Long file of 1 column of single digits, no options check++++++++++
 "Stat. Type", "Column 1"
 "Count", 50
 "Mean", +2.0018560000000000e+00
@@ -107,7 +107,7 @@
 
 ++++++++++ Shell got Return code number 0 for 50 long file with single column (2.001856, 0.000429123454003053)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column of single digits, no options check++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_Michelso.dat +++Long file of 1 column of single digits, no options check++++++++++
 "Stat. Type", "Column 1"
 "Count", 100
 "Mean", +2.9985240000000000e+02
@@ -117,7 +117,7 @@
 
 ++++++++++ Shell got Return code number 0 for 100 long file with single column (299.8524, 0.0790105478190518)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accuracy file of 3 large close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc1.dat  +++NIST numerical accuracy file of 3 large close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 3
 "Mean", +1.0000002000000000e+07
@@ -127,7 +127,7 @@
 
 ++++++++++ Shell got Return code number 0 for 1st NIST numerical accuracy file ( 10000002, 1)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accuracy file of close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc2.dat  +++NIST numerical accuracy file of close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +1.2000000000000000e+00
@@ -137,7 +137,7 @@
 
 ++++++++++ Shell got Return code number 0 for 2nd NIST numerical accuracy file ( 1.2, 0.1)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accuracy file of close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc3.dat  +++NIST numerical accuracy file of close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +1.0000002000000000e+06
@@ -147,7 +147,7 @@
 
 ++++++++++ Shell got Return code number 0 for 3rd NIST numerical accuracy file (1000000.2, 0.1)++++++++++
 
-++++++++++ ../csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accuracy file of large close numbers++++++++++
+++++++++++ csvstats -HMNnPRp NIST_StRD_NumAcc4.dat  +++NIST numerical accuracy file of large close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Mean", +1.0000000200000000e+07
@@ -157,7 +157,7 @@
 
 ++++++++++ Shell got Return code number 0 for 4th NIST numerical accuracy file (10000000.2, 0.1)++++++++++
 
-++++++++++ ../csvstats -Hnp -s 60 NumAcc4.dat  +++Skip first 60 lines in uncommented NIST numerical accuracy file of large close numbers++++++++++
+++++++++++ csvstats -Hnp -s 60 NumAcc4.dat  +++Skip first 60 lines in uncommented NIST numerical accuracy file of large close numbers++++++++++
 "Stat. Type", "Column 1"
 "Count", 1001
 "Most -ve", +1.0000000100000000e+07
@@ -171,7 +171,7 @@
 
 ++++++++++ Shell got Return code number 0 for 4th NIST numerical accuracy file (10000000.2, 0.1)++++++++++
 
-++++++++++ ../csvstats -H -c "!" -C ";" data.txt  +++ file with semi colon as the separator between colummns++++++++++
+++++++++++ csvstats -H -c "!" -C ";" data.txt  +++ file with semi colon as the separator between colummns++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000001000000e+50, +4.0000000004000000e+50, +7.0000000007000000e+50
@@ -185,7 +185,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for semi colon column separator file++++++++++
 
-++++++++++ ../csvstats -H -C "\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns++++++++++
+++++++++++ csvstats -H -C "\t" data.tab  +++ file with ASCII horizontal tab as the separator between colummns++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000000e+50, +4.0000000000000000e+50, +7.0000000000000000e+50
@@ -199,7 +199,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for tab column separator file++++++++++
 
-++++++++++ ../csvstats -H -C "\011" data.tab  +++ file with ASCII horizontal tab (Octal value 011) as the column separator++++++++++
+++++++++++ csvstats -H -C "\011" data.tab  +++ file with ASCII horizontal tab (Octal value 011) as the column separator++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000000e+50, +4.0000000000000000e+50, +7.0000000000000000e+50
@@ -213,7 +213,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for tab column separator file++++++++++
 
-++++++++++ ../csvstats -H -C "\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator++++++++++
+++++++++++ csvstats -H -C "\x9" data.tab  +++ file with ASCII horizontal tab (Hex value 0x09) as the column separator++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000000e+50, +4.0000000000000000e+50, +7.0000000000000000e+50
@@ -227,7 +227,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for tab column separator file++++++++++
 
-++++++++++ ../csvstats -H -C " " data.dat  +++ file with just ASCII space as the separator between colummns++++++++++
+++++++++++ csvstats -H -C " " data.dat  +++ file with just ASCII space as the separator between colummns++++++++++
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.0000000000000000e+50, +4.0000000000000000e+50, +7.0000000000000000e+50
@@ -241,7 +241,7 @@
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for space column separator file++++++++++
 
-++++++++++ ../csvstats -d 10 data.csv  +++ output each result to 10 decimal places++++++++++
+++++++++++ csvstats -d 10 data.csv  +++ output each result to 10 decimal places++++++++++
 3, 3, 3
 +1.0000000000e+50, +4.0000000000e+50, +7.0000000000e+50
 +2.0000000000e+50, +5.0000000000e+50, +8.0000000000e+50
@@ -254,7 +254,7 @@
 +0.0000000000e+00, +0.0000000000e+00, +0.0000000000e+00
 ++++++++++ Shell got Return code number 0 for results to 10 decimal places++++++++++
 
-++++++++++ cat data.csv | ../csvstats -v -o stdinTest.tst +++stdin input with file output check++++++++++
+++++++++++ cat data.csv | csvstats -v -o stdinTest.tst +++stdin input with file output check++++++++++
 Info: Processed 9 data items from stdin
 ++++++++++ Shell got Return code number 0 for input through stdin and output to a File++++++++++
 ++++++++++ cat stdinTest.tst  +++show output file check++++++++++
@@ -271,7 +271,7 @@ Info: Processed 9 data items from stdin
 "Pearson's Skew", +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00
 ++++++++++ Shell got Return code number 0 for File output++++++++++
 
-++++++++++ ../csvstats -vVh  +++Usage/help verbose and version information check++++++++++
+++++++++++ csvstats -vVh  +++Usage/help verbose and version information check++++++++++
 csvstats 0v7 (2025-06-28)
 Usage:
  csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
