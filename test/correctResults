@@ -272,9 +272,9 @@ Info: Processed 9 data items from stdin
 ++++++++++ Shell got Return code number 0 for File output++++++++++
 
 ++++++++++ csvstats -vVh  +++Usage/help verbose and version information check++++++++++
-csvstats 0v7 (2025-06-28)
+csvstats 0v8 (2025-08-12)
 Usage:
- csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
  -C CHR .. use CHR, not comma as the column separator
  -c CHR .. use CHR, not hash as the comment delimiter
@@ -282,6 +282,7 @@ Usage:
  -d INT .. provide INT decimal places on output stats - where 0 <= INT <= 30
  -H ...... enable Header output mode
  -h ...... this help / usage information
+ -l INT .. use only INT rows of data sources - where 1 <= INT <= 1000000 (0 means all rows)
  -M ...... disable Median value output
  -N ...... disable most Negetive value output
  -n ...... enable extra blank output lines
