@@ -1,10 +1,11 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Sun Jun 29 20:25:12 2025, by O.F.H.
+ * last modified on Tue Aug 12 22:28:00 2025, by O.F.H.
  *
  * written by O.Holland
  *
+ * Added ability to read a limited number of rows from the data streams
  * Fixed compile error when -DDEBUG is used
  * Added ability to skip lines at the start of data streams
  * Added ability to use alternate column separator to comma
@@ -501,10 +502,11 @@ void  outputStatsInColumnForm( struct config *  cfg, FILE *  ofp, int  numOfColu
 
 size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
 	int  i;
-	size_t  lineNumber, totalNumbers, storageSize;
+	size_t  lineNumber, totalNumbers, storageSize, linesToRead;
 	char  bfr[ BFR_SIZE ];
 
 	lineNumber = totalNumbers = (size_t) 0;
+	linesToRead = (size_t) cfg->l.optionInt;   /* number of lines to read from the start */
 	storageSize = (size_t) COMP_NUMBER;
 	if (( storage = malloc( storageSize * SIZEOF_REAL_NUM )) == NULL )  {
         fprintf( stderr, "Error: unable to allocate memory to store %ld csv numbers: Aborting\n", storageSize );
@@ -512,7 +514,7 @@ size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
     else  {
 		for ( i = cfg->s.optionInt; ( i-- > 0 && ( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )); )		/* skip lines if required */
 			if ( cfg->D.active )  printf( "Debug: Skipping line - \"%s\"", bfr );		/* print skip lines if required */
-		while( fgets( bfr, BFR_SIZE - 1, fp ) != NULL )  {
+		while(( fgets( bfr, BFR_SIZE - 1, fp ) != NULL ) && (( linesToRead > 0 ) ? lineNumber < linesToRead : TRUE ))  {   /* read lines until EOF or -l INT lines */
 			if (( *bfr == '\0' ) || ( *bfr == cfg->c.optionChr ) || ( *bfr == '\r' ) || ( *bfr == '\n' ))  {   /* skip comments or blank lines */
 				if ( cfg->D.active )  printf( "Debug: Warning: skipping a line (blank or comment) - %s", ( *bfr == '#' ) ? bfr : "\n" );
 			}
@@ -589,7 +591,8 @@ int  processInToOut( struct config *  cfg, FILE *  fp, FILE *  ofp )  {
 		writeOutput( cfg, ofp, numberOfColumns );
 		if( cfg->n.active )  printf( "\n" );   /* output a blank line if new line mode is active */
 	}
-	if ( ! feof( fp ))  perror( "Error when reading input file" );
+	/* output a message if the whole file should have been read */
+	if ( ! feof( fp ) && ( cfg->l.optionInt == 0 ))  perror( "Error when reading input file" );
 	fflush( ofp );
 	fflush( stderr );
 	return((int)( errorIndicator * numbersProcessed ));

@@ -82,6 +82,7 @@ struct config {
   struct optInt d;  /* (decimal_places) INT .. provide INT decimal places on output stats - where 0 <= INT <= 30 */
   struct optFlg H;  /* (header) ...... enable Header output mode */
   struct optFlg h;  /* (help) ...... this help / usage information */
+  struct optInt l;  /* (lines) INT .. use only INT rows of data sources - where 1 <= INT <= 1000000 (0 means all rows) */
   struct optFlg M;  /* (median) ...... disable Median value output */
   struct optFlg N;  /* (negetive) ...... disable most Negetive value output */
   struct optFlg n;  /* (newline) ...... enable extra blank output lines */
@@ -97,7 +98,7 @@ struct config {
 };
 
 // getopt() option string
-#define OPTIONS ":AC:c:Dd:HhMNno:PpRrSs:Vv"
+#define OPTIONS ":AC:c:Dd:Hhl:MNno:PpRrSs:Vv"
 
 void  usage ( struct config *  optStructPtr, char *  exeName );
 void  initConfiguration ( struct config *  optStructPtr );

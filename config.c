@@ -95,7 +95,7 @@ int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
 // Functions for Command Line Options Configuration from JSON Data
 void  usage( struct config *  opt, char *  exeName )  {
   printf( "Usage:\n");
-  printf( " %s [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]\n", exeName );
+  printf( " %s [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]\n", exeName );
   printf( " %s %s\n", opt->A.optID, opt->A.helpStr ); /* average */
   printf( " %s %s\n", opt->C.optID, opt->C.helpStr ); /* column_separator */
   printf( " %s %s\n", opt->c.optID, opt->c.helpStr ); /* comment_delimiter */
@@ -103,6 +103,7 @@ void  usage( struct config *  opt, char *  exeName )  {
   printf( " %s %s\n", opt->d.optID, opt->d.helpStr ); /* decimal_places */
   printf( " %s %s\n", opt->H.optID, opt->H.helpStr ); /* header */
   printf( " %s %s\n", opt->h.optID, opt->h.helpStr ); /* help */
+  printf( " %s %s\n", opt->l.optID, opt->l.helpStr ); /* lines */
   printf( " %s %s\n", opt->M.optID, opt->M.helpStr ); /* median */
   printf( " %s %s\n", opt->N.optID, opt->N.helpStr ); /* negetive */
   printf( " %s %s\n", opt->n.optID, opt->n.helpStr ); /* newline */
@@ -156,6 +157,14 @@ void  initConfiguration ( struct config *  opt )  {
   opt->h.active = FALSE;
   opt->h.optID = "-h";
   opt->h.helpStr = "...... this help / usage information";
+// lines: optInt
+  opt->l.active = FALSE;
+  opt->l.optID = "-l";
+  opt->l.helpStr = "INT .. use only INT rows of data sources - where 1 <= INT <= 1000000 (0 means all rows)";
+  opt->l.mostPosLimit = 1000000;
+  opt->l.mostNegLimit = 0;
+  opt->l.optionInt = 0;
+  opt->l.defaultVal = 0;
 // median: optFlg
   opt->M.active = FALSE;
   opt->M.optID = "-M";
@@ -224,6 +233,7 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
       case 'd': configureIntegerOption( &opt->d, optarg ); break; /* decimal_places */
       case 'H': opt->H.active = TRUE; break; /* header */
       case 'h': opt->h.active = TRUE; break; /* help */
+      case 'l': configureIntegerOption( &opt->l, optarg ); break; /* lines */
       case 'M': opt->M.active = TRUE; break; /* median */
       case 'N': opt->N.active = TRUE; break; /* negetive */
       case 'n': opt->n.active = TRUE; break; /* newline */
@@ -237,12 +247,13 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
       case 'V': opt->V.active = TRUE; break; /* version */
       case 'v': opt->v.active = TRUE; break; /* verbose */
       case '?' : {
-        if ( strchr( "Ccdos", optopt ) != NULL ) {
+        if ( strchr( "Ccdlos", optopt ) != NULL ) {
           fprintf (stderr, "Error: Option -%c requires an argument.\n", optopt);
           switch ( optopt ) {
             case 'C': opt->C.active = FALSE; break;
             case 'c': opt->c.active = FALSE; break;
             case 'd': opt->d.active = FALSE; break;
+            case 'l': opt->l.active = FALSE; break;
             case 'o': opt->o.active = FALSE; break;
             case 's': opt->s.active = FALSE; break;
           }
@@ -269,6 +280,8 @@ void  configuration_status( struct config *  opt )  {
   printf( "Debug: option -d value is %d, limits: %d .. %d\n", opt->d.optionInt, opt->d.mostNegLimit, opt->d.mostPosLimit); /* decimal_places */
   printf( "Debug: option -H is %sctive (-H %s)\n", (opt->H.active) ? "a" : "ina", opt->H.helpStr); /* header */
   printf( "Debug: option -h is %sctive (-h %s)\n", (opt->h.active) ? "a" : "ina", opt->h.helpStr); /* help */
+  printf( "Debug: option -l is %sctive (-l %s)\n", (opt->l.active) ? "a" : "ina", opt->l.helpStr); /* lines */
+  printf( "Debug: option -l value is %d, limits: %d .. %d\n", opt->l.optionInt, opt->l.mostNegLimit, opt->l.mostPosLimit); /* lines */
   printf( "Debug: option -M is %sctive (-M %s)\n", (opt->M.active) ? "a" : "ina", opt->M.helpStr); /* median */
   printf( "Debug: option -N is %sctive (-N %s)\n", (opt->N.active) ? "a" : "ina", opt->N.helpStr); /* negetive */
   printf( "Debug: option -n is %sctive (-n %s)\n", (opt->n.active) ? "a" : "ina", opt->n.helpStr); /* newline */

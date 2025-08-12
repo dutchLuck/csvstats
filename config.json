@@ -55,6 +55,15 @@
 		"long": "help",
 		"help": "...... this help / usage information"
 	},
+	"lines": {
+		"type": "optInt",
+		"default": 0,
+		"short": "l",
+		"long": "lines",
+		"most_pos_limit": 1000000,
+		"most_neg_limit": 0,
+		"help": "INT .. use only INT rows of data sources - where 1 <= INT <= 1000000 (0 means all rows)"
+	},
 	"median": {
 		"type": "optFlg",
 		"default": "true",

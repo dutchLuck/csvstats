@@ -1,7 +1,7 @@
 /*
  * C S V S T A T S . C
  *
- * Last Modified on Sat Jun 28 22:18:41 2025
+ * Last Modified on Tue Aug 12 22:30:03 2025
  *
  * Read comma separated values from stdin or files
  * and calculate basic statistics like arithmetic
@@ -9,6 +9,7 @@
  * values.
  *
  *
+ * 0v8 Added -l INT option to limit the number of rows read from the data sources
  * 0v7 Added decimal place control and broke -d previous use, now -C
  * 0v6 Added ability to skip lines at the start of data streams
  * 0v5 Added ability to use alternate column separator to comma
@@ -30,7 +31,7 @@
 #define TRUE (!(FALSE))
 #endif
 
-#define  NAME_VERSION  "csvstats 0v7 (2025-06-28)"
+#define  NAME_VERSION  "csvstats 0v8 (2025-08-12)"
 
 char *  exePath = NULL;
 char *  exeName = NULL;
