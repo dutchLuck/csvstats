@@ -2,33 +2,30 @@
 The csvstats command line utility program calculates the basic statistical descriptors for one or more columns of numbers read in from one or more files or read in from standard input (stdin). By default the columns are expected to be multiple ASCII characters representing numbers separated from one another by a comma (,). In this broad sense the program calculates the statistics of data in Comma Separated Value (CSV) files. The program is much less strict in what it accepts as CSV format than the CSV definition provided in
 <a href="https://www.ietf.org/rfc/rfc4180.txt">RFC 4180</a>.
 
-The stats are calculated using long double floating point precision and include sum, mean, median and standard deviation. The standard deviation is calculated from the semi-normalized column data, created by subtracting the mean from the data values to avoid numerical errors becoming large. Input files are assumed to have 1 or more columns of numbers, which do not have missing values, so that once the columns are counted in the first line of data, the rest of file is consistant with that count. Lines starting with a hash '#' are considered to be comment lines and are ignored, as are blank lines. For example the following data file is compatible with csvstats.
+The stats are calculated using long double floating point precision and include sum, mean, median and standard deviation. The standard deviation is calculated from the semi-normalized column data, created by subtracting the mean from the data values to avoid numerical errors becoming large. Input files are assumed to have 1 or more columns of numbers, which do not have missing values, so that once the columns are counted in the first line of data, the rest of file is consistant with that count. Lines starting with a hash '#' are considered to be comment lines and are ignored, as are blank lines. For example the following data file is compatible with csvstats given that ";" replaces commas and "!" replaces hash as the comment delimiter.
 ```
-% cat test/data.csv
-# Test file for julia bfbs.jl
-#
+% cat test/data.txt
+! Test file for csvstats.c
 
-1.000000000000000000000000000000000000001e+50, 4.000000000000000000000000000000000000004e+50, 7.000000000000000000000000000000000000007e+50
-
-2.000000000000000000000000000000000000002e+50, 5.000000000000000000000000000000000000005e+50, 8.000000000000000000000000000000000000008e+50
-
-3.000000000000000000000000000000000000003e+50, 6.000000000000000000000000000000000000006e+50, 9.000000000000000000000000000000000000009e+50
+1.0000000001e+50; 4.0000000004e+50; 7.0000000007e+50
+2.0000000002e+50; 5.0000000005e+50; 8.0000000008e+50
+3.0000000003e+50; 6.0000000006e+50; 9.0000000009e+50
 %
 ```
 The csvstats program running on Apple silicon produces the following CSV output; -
 ```
-% ./csvstats -H test/data.csv
+% ./csvstats -C ';' -c '!' -H -d 11 test/data.txt
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
-"Most -ve", +1.0000000000000001e+50, +4.0000000000000003e+50, +7.0000000000000001e+50
-"Median", +2.0000000000000002e+50, +5.0000000000000000e+50, +8.0000000000000006e+50
-"Most +ve", +2.9999999999999998e+50, +5.9999999999999996e+50, +9.0000000000000003e+50
-"Range", +1.9999999999999997e+50, +1.9999999999999993e+50, +2.0000000000000002e+50
-"Mean", +1.9999999999999997e+50, +5.0000000000000000e+50, +7.9999999999999989e+50
-"Sum", +5.9999999999999996e+50, +1.5000000000000000e+51, +2.3999999999999999e+51
-"Sample Std. Dev.", +8.1649658092772592e+49, +8.1649658092772571e+49, +8.1649658092772613e+49
-"Est. Pop. Std. Dev.", +9.9999999999999987e+49, +9.9999999999999966e+49, +1.0000000000000001e+50
-"Pearson's Skew", -1.2461512460483588e-15, +0.0000000000000000e+00, -4.9846049841934344e-15
+"Most -ve", +1.00000000010e+50, +4.00000000040e+50, +7.00000000070e+50
+"Median", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
+"Most +ve", +3.00000000030e+50, +6.00000000060e+50, +9.00000000090e+50
+"Range", +2.00000000020e+50, +2.00000000020e+50, +2.00000000020e+50
+"Mean", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
+"Sum", +6.00000000060e+50, +1.50000000015e+51, +2.40000000024e+51
+"Sample Std. Dev.", +8.16496581009e+49, +8.16496581009e+49, +8.16496581009e+49
+"Est. Pop. Std. Dev.", +1.00000000010e+50, +1.00000000010e+50, +1.00000000010e+50
+"Pearson's Skew", +0.00000000000e+00, +0.00000000000e+00, +0.00000000000e+00
 %
 ```
 
@@ -39,7 +36,7 @@ The usage information is; -
 ```
 % ./csvstats -h
 Usage:
- csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-v][-V] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
  -C CHR .. use CHR, not comma as the column separator
  -c CHR .. use CHR, not hash as the comment delimiter
@@ -47,6 +44,7 @@ Usage:
  -d INT .. provide INT decimal places on output stats - where 0 <= INT <= 30
  -H ...... enable Header output mode
  -h ...... this help / usage information
+ -l INT .. use only INT rows of data sources - where 1 <= INT <= 1000000 (0 means all rows)
  -M ...... disable Median value output
  -N ...... disable most Negetive value output
  -n ...... enable extra blank output lines
@@ -57,8 +55,8 @@ Usage:
  -r ...... enable output in Row format
  -S ...... disable Standard Deviation value output
  -s INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000
- -v ...... enable more verbose information output
  -V ...... enable version information output
+ -v ...... enable more verbose information output
  [FILE_1 .. [FILE_N]] Optional Name(s) of File(s) to process
 %
 ```
