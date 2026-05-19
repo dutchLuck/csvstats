@@ -18,10 +18,11 @@ The csvstats program running on Apple silicon produces the following CSV output;
 "Stat. Type", "Column 1", "Column 2", "Column 3"
 "Count", 3, 3, 3
 "Most -ve", +1.00000000010e+50, +4.00000000040e+50, +7.00000000070e+50
+"Mean", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
 "Median", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
+"L-H Median", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
 "Most +ve", +3.00000000030e+50, +6.00000000060e+50, +9.00000000090e+50
 "Range", +2.00000000020e+50, +2.00000000020e+50, +2.00000000020e+50
-"Mean", +2.00000000020e+50, +5.00000000050e+50, +8.00000000080e+50
 "Sum", +6.00000000060e+50, +1.50000000015e+51, +2.40000000024e+51
 "Sample Std. Dev.", +8.16496581009e+49, +8.16496581009e+49, +8.16496581009e+49
 "Est. Pop. Std. Dev.", +1.00000000010e+50, +1.00000000010e+50, +1.00000000010e+50
@@ -36,7 +37,7 @@ The usage information is; -
 ```
 % ./csvstats -h
 Usage:
- csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]
+ csvstats [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-t][-V][-v] [FILE_1 .. [FILE_N]]
  -A ...... disable Arithmetic Mean (i.e. average ) output.
  -C CHR .. use CHR, not comma as the column separator
  -c CHR .. use CHR, not hash as the comment delimiter
@@ -55,6 +56,7 @@ Usage:
  -r ...... enable output in Row format
  -S ...... disable Standard Deviation value output
  -s INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000
+ -t ...... enable timing information output
  -V ...... enable version information output
  -v ...... enable more verbose information output
  [FILE_1 .. [FILE_N]] Optional Name(s) of File(s) to process
@@ -79,8 +81,14 @@ Results extracted from the output of command "./csvstats -s 60 test/NumAcc4.dat"
 "Mean", +1.0000000200000000e+07
 "Est. Pop. Std. Dev.", +9.9999999999909050e-02
 ```
-For comparison the results extracted from the output of command "./csvstats -s 60 test/NumAcc4.dat" on Apple Silicon are; -
+For comparison the results extracted from the output of command "./csvstats -s 60 -v -MNPpR test/NumAcc4.dat" on Apple Silicon are; -
 ```
-"Mean", +1.0000000200000098e+07
-"Est. Pop. Std. Dev.", +1.0000000055879354e-01
+"Mean", +1.00000002000000980e+07
+"Est. Pop. Std. Dev.", +1.00000000558793545e-01
+```
+Version information is; -
+```
+% ./csvstats -V                              
+csvstats 0v9 (2026-05-19)
+%
 ```
