@@ -95,7 +95,7 @@ int  configureChrOption( struct optChr *  chrStructPtr, char *  chrString )  {
 // Functions for Command Line Options Configuration from JSON Data
 void  usage( struct config *  opt, char *  exeName )  {
   printf( "Usage:\n");
-  printf( " %s [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-V][-v] [FILE_1 .. [FILE_N]]\n", exeName );
+  printf( " %s [-A][-C CHR][-c CHR][-D][-d INT][-H][-h][-l INT][-M][-N][-n][-o TXT][-P][-p][-R][-r][-S][-s INT][-t][-V][-v] [FILE_1 .. [FILE_N]]\n", exeName );
   printf( " %s %s\n", opt->A.optID, opt->A.helpStr ); /* average */
   printf( " %s %s\n", opt->C.optID, opt->C.helpStr ); /* column_separator */
   printf( " %s %s\n", opt->c.optID, opt->c.helpStr ); /* comment_delimiter */
@@ -114,6 +114,7 @@ void  usage( struct config *  opt, char *  exeName )  {
   printf( " %s %s\n", opt->r.optID, opt->r.helpStr ); /* row */
   printf( " %s %s\n", opt->S.optID, opt->S.helpStr ); /* stddev */
   printf( " %s %s\n", opt->s.optID, opt->s.helpStr ); /* skip */
+  printf( " %s %s\n", opt->t.optID, opt->t.helpStr ); /* time */
   printf( " %s %s\n", opt->V.optID, opt->V.helpStr ); /* version */
   printf( " %s %s\n", opt->v.optID, opt->v.helpStr ); /* verbose */
   printf( " %s %s\n", "[FILE_1 .. [FILE_N]]", "Optional Name(s) of File(s) to process" ); /* posParam1 */
@@ -210,6 +211,10 @@ void  initConfiguration ( struct config *  opt )  {
   opt->s.mostNegLimit = 0;
   opt->s.optionInt = 0;
   opt->s.defaultVal = 0;
+// time: optFlg
+  opt->t.active = FALSE;
+  opt->t.optID = "-t";
+  opt->t.helpStr = "...... enable timing information output";
 // version: optFlg
   opt->V.active = FALSE;
   opt->V.optID = "-V";
@@ -244,6 +249,7 @@ int  setConfiguration ( int  argc, char *  argv[], struct config *  opt )  {
       case 'r': opt->r.active = TRUE; break; /* row */
       case 'S': opt->S.active = TRUE; break; /* stddev */
       case 's': configureIntegerOption( &opt->s, optarg ); break; /* skip */
+      case 't': opt->t.active = TRUE; break; /* time */
       case 'V': opt->V.active = TRUE; break; /* version */
       case 'v': opt->v.active = TRUE; break; /* verbose */
       case '?' : {
@@ -294,6 +300,7 @@ void  configuration_status( struct config *  opt )  {
   printf( "Debug: option -S is %sctive (-S %s)\n", (opt->S.active) ? "a" : "ina", opt->S.helpStr); /* stddev */
   printf( "Debug: option -s is %sctive (-s %s)\n", (opt->s.active) ? "a" : "ina", opt->s.helpStr); /* skip */
   printf( "Debug: option -s value is %d, limits: %d .. %d\n", opt->s.optionInt, opt->s.mostNegLimit, opt->s.mostPosLimit); /* skip */
+  printf( "Debug: option -t is %sctive (-t %s)\n", (opt->t.active) ? "a" : "ina", opt->t.helpStr); /* time */
   printf( "Debug: option -V is %sctive (-V %s)\n", (opt->V.active) ? "a" : "ina", opt->V.helpStr); /* version */
   printf( "Debug: option -v is %sctive (-v %s)\n", (opt->v.active) ? "a" : "ina", opt->v.helpStr); /* verbose */
   printf( "Debug: %s (%s)\n", opt->posParam1.paramNameStr, opt->posParam1.helpStr);

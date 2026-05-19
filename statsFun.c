@@ -1,10 +1,11 @@
 /*
  *  S T A T S F U N . C
  *
- * last modified on Tue Aug 12 22:28:00 2025, by O.F.H.
+ * last modified on Tue May 19 12:51:40 2026, by O.F.H.
  *
  * written by O.Holland
  *
+ * Added Hodges-Lehmann (one-sample) estimator (pseudo-median) into calcMedians()
  * Added ability to read a limited number of rows from the data streams
  * Fixed compile error when -DDEBUG is used
  * Added ability to skip lines at the start of data streams
@@ -24,10 +25,10 @@
 #define  BFR_SIZE  15*MAX_NUM_OF_COLS
 #define  COMP_NUMBER  2520
 
-/* Set up default Floating Point Precision to long double */
-#ifndef  DBL_PREC
+/* Set up default Floating Point Precision to double precision */
+#ifndef  LDBL_PREC
 #ifndef  FLT_PREC
-#define  LDBL_PREC 1
+#define  DBL_PREC 1
 #endif
 #endif
 
@@ -68,6 +69,7 @@ size_t  columnsSizes[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsSums[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsMeans[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsMedians[ MAX_NUM_OF_COLS ];
+REAL_NUM_PREC  columnsLH_Medians[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsMostPos[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsMostNeg[ MAX_NUM_OF_COLS ];
 REAL_NUM_PREC  columnsSampleStdDev[ MAX_NUM_OF_COLS ];  /* Sample Std. Dev. (denom. = n) */
@@ -166,14 +168,11 @@ void  printULongAndSeparator( FILE *  ofp, unsigned long  number, char *  separa
 /*----------------------------------*/
   
 void  printNumberAndSeparator( struct config *  cfg, FILE *  ofp, REAL_NUM_PREC  number, char *  separator )  {
-	int  output_decimal_places = cfg->d.defaultVal;
+	int  output_decimal_places = WRT_OUT_DIG;   /* use precision specified by macro in float.h as default */
 
-	/* use precision specified by macro in float.h if most_pos_limit was specified */
-	if ( cfg->d.active )  {
-		if ( cfg->d.optionInt == cfg->d.mostPosLimit ) output_decimal_places = WRT_OUT_DIG;
-		else  output_decimal_places = cfg->d.optionInt;
-	}
-	fprintf( ofp, WRT_OUT_FMT, output_decimal_places, number );   /* use precision specified by macro in float.h */
+	/* use print out precision specified by -d option if it is available */
+	if ( cfg->d.active )  output_decimal_places = cfg->d.optionInt;
+	fprintf( ofp, WRT_OUT_FMT, output_decimal_places, number );
 	if (( separator != NULL ) || ( *separator != '\0' ))  fprintf( ofp, "%s", separator );
 }
 
@@ -290,11 +289,43 @@ int  compareRealNumbers( const void *  ptr1, const void *  ptr2 )  {
 	else if ( *dp2 > *dp1 )  return( -1 );
 	return 0;
 }
-  
-  
+
+
+/*----------------------------------*/
+
+/*
+ * Hodges-Lehmann (one-sample) estimator (pseudo-median)
+ *
+ * Estimate the H-L center using the straight forward sorting approach
+ */
+REAL_NUM_PREC h_l_estimate(REAL_NUM_PREC x[], int n)  {
+    REAL_NUM_PREC  result = (REAL_NUM_PREC) NAN;  /* Initialize to NaN */
+    REAL_NUM_PREC *  y;    /* Storage for all pairwise sums */
+    int i, j, k;
+    int nn = 0;
+
+    if(( y = (REAL_NUM_PREC *) malloc((n * (n + 1) / 2) * sizeof(REAL_NUM_PREC))) == NULL ) {
+        fprintf(stderr, "Memory allocation failed for y\n");
+    }
+    else {
+        for (i = 0; i < n; i++) {
+            for (j = i; j < n; j++) {
+                y[nn++] = x[i] + x[j];
+            }
+        }
+        qsort(y, nn, sizeof(REAL_NUM_PREC), compareRealNumbers);   /* sort the pairwise sums */
+        k = (nn + 1) / 2 - 1;       /* get index of median value */
+        result = (2 * (k + 1) == nn) ? (y[k] + y[k + 1]) / 4.0 : y[k] / 2.0;
+        free( y );
+    }
+    return result;
+}
+
+
 /*----------------------------------*/
   
-int  calcMedians( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  numOfColValues[], REAL_NUM_PREC  store[], REAL_NUM_PREC *  colMedians )  {
+int  calcMedians( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  numOfColValues[],
+	REAL_NUM_PREC  store[], REAL_NUM_PREC *  colMedians, REAL_NUM_PREC *  colLH_Medians )  {
 	int  i;
 	size_t  j;
 	REAL_NUM_PREC *  colStorage;
@@ -339,6 +370,10 @@ int  calcMedians( struct config *  cfg, FILE *  ofp, int  numOfCols, size_t  num
 				colMedians[ i ] =  colStorage[ j ];
 			else  {
 				colMedians[ i ] = 0.5 * ( colStorage[ j - 1 ] + colStorage[ j ]);
+			}
+			/* find the Hodges-Lehmann median value */
+			if ( colLH_Medians != NULL )  {
+				colLH_Medians[ i ] = h_l_estimate(colStorage, numOfColValues[ i ]);
 			}
 		}
 		free( colStorage );
@@ -417,10 +452,20 @@ void  printColumnsStatsInColumns( struct config *  cfg, FILE *  ofp, int  numOfC
 	  for( i = 0; i < numOfColumns; i++ )
 		printNumberAndSeparator( cfg, ofp, columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
+	if( !cfg->A.active )  {
+	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Mean\", " );
+	  for( i = 0; i < numOfColumns; i++ )
+		printNumberAndSeparator( cfg, ofp, columnsMeans[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+	}
 	if( !cfg->M.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Median\", " );
 	  for( i = 0; i < numOfColumns; i++ )
 		printNumberAndSeparator( cfg, ofp, columnsMedians[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
+	}
+	if( !cfg->M.active )  {
+	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"L-H Median\", " );
+	  for( i = 0; i < numOfColumns; i++ )
+		printNumberAndSeparator( cfg, ofp, columnsLH_Medians[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if( !cfg->P.active )  {
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Most +ve\", " );
@@ -431,11 +476,6 @@ void  printColumnsStatsInColumns( struct config *  cfg, FILE *  ofp, int  numOfC
 	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Range\", " );
 	  for( i = 0; i < numOfColumns; i++ )
 		printNumberAndSeparator( cfg, ofp, columnsMostPos[i] - columnsMostNeg[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
-	}
-	if( !cfg->A.active )  {
-	  if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Mean\", " );
-	  for( i = 0; i < numOfColumns; i++ )
-		printNumberAndSeparator( cfg, ofp, columnsMeans[i], ( i < ( numOfColumns - 1 )) ? separatorStr : "\n" );
 	}
 	if ( cfg->v.active || cfg->H.active )  fprintf( ofp, "\"Sum\", " );
 	for( i = 0; i < numOfColumns; i++ )
@@ -555,7 +595,7 @@ size_t  readInput( struct config *  cfg, FILE *  fp, int *  numOfColumns )  {
 void  writeOutput( struct config *  cfg, FILE *  ofp, int  numOfColumns )  {
 	int  i;
 
-	if ( calcMedians( cfg, ofp, numOfColumns, columnsSizes, storage, columnsMedians ) != numOfColumns )
+	if ( calcMedians( cfg, ofp, numOfColumns, columnsSizes, storage, columnsMedians, columnsLH_Medians ) != numOfColumns )
 		fprintf( ofp, "Warning: unable to calulate median values\n" );
 	/* Calculate means for use in the Std Dev calcs */
 	for( i = 0; i < numOfColumns; i++ )

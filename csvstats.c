@@ -1,7 +1,7 @@
 /*
  * C S V S T A T S . C
  *
- * Last Modified on Tue Aug 12 22:30:03 2025
+ * Last Modified on Tue May 19 12:51:27 2026
  *
  * Read comma separated values from stdin or files
  * and calculate basic statistics like arithmetic
@@ -9,6 +9,7 @@
  * values.
  *
  *
+ * 0v9 Added timing and the H-L median to the output and changed the output order
  * 0v8 Added -l INT option to limit the number of rows read from the data sources
  * 0v7 Added decimal place control and broke -d previous use, now -C
  * 0v6 Added ability to skip lines at the start of data streams
@@ -21,6 +22,7 @@
 #include <stdlib.h>		/* free() */
 #include <string.h>		/* strdup() */
 #include <libgen.h>		/* basename() */
+#include <time.h>		  /* clock_gettime() */
 #include "config.h"		/* struct config */
 #include "statsFun.h" /* processInToOut() */
 
@@ -31,7 +33,7 @@
 #define TRUE (!(FALSE))
 #endif
 
-#define  NAME_VERSION  "csvstats 0v8 (2025-08-12)"
+#define  NAME_VERSION  "csvstats 0v9 (2026-05-19)"
 
 char *  exePath = NULL;
 char *  exeName = NULL;
@@ -46,10 +48,16 @@ void  cleanupStorage( void )  {
 
 
 int  main (int argc, char *  argv[])  {
+  int  result = 0;
   struct config  config;
   int indexToFirstNonConfig;
   int index;
+  int time_ok;
+  double  elapsed_wall_clock_time;
+  struct timespec  start_time;
+  struct timespec  finish_time;
 
+  time_ok = (clock_gettime(CLOCK_MONOTONIC, &start_time) == 0);
   /* Ensure any allocated memory is free'd */
 	atexit( cleanupStorage );
   /* setup the name of this program */
@@ -74,10 +82,15 @@ int  main (int argc, char *  argv[])  {
     if ( config.h.active )  usage( &config, exeName );
   }
 	else  {
-  	/* Attempt to dump Hex and Ascii and return 0 if successful */
-    return( processNonConfigCommandLineParameters( &config, indexToFirstNonConfig, argc - 1, argv ));
+  	/* Attempt to read CSV file(s), calculate stats and return 0 if successful */
+    result = ( processNonConfigCommandLineParameters( &config, indexToFirstNonConfig, argc - 1, argv ));
   }
-  return 0;
+  if( config.t.active && time_ok && ( clock_gettime(CLOCK_MONOTONIC, &finish_time ) == 0 )) {
+    elapsed_wall_clock_time = (double)( finish_time.tv_sec - start_time.tv_sec ) +
+      ( double )( finish_time.tv_nsec - start_time.tv_nsec ) * (double)(1.0e-9);
+    printf( "%s time taken: %9.6lf [sec]\n", exeName, elapsed_wall_clock_time );
+  }
+  return result;
 }
 
 

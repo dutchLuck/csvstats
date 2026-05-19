@@ -136,6 +136,13 @@
 		"most_neg_limit": 0,
 		"help": "INT .. skip INT lines at the start of data sources - where 0 <= INT <= 1000"
 	},
+	"time": {
+		"type": "optFlg",
+		"default": "false",
+		"short": "t",
+		"long": "time",
+		"help": "...... enable timing information output"
+	},
 	"version": {
 		"type": "optFlg",
 		"default": "false",
